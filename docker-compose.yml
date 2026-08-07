@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: aicreator-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: aicreator
+      POSTGRES_PASSWORD: aicreator
+      POSTGRES_DB: aicreator_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aicreator"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aicreator-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://aicreator:${DB_PASSWORD}@postgres:5432/aicreator_db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend/storage:/app/storage    # generated images/video/gif persist here
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aicreator-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://backend:8080
+
+volumes:
+  pgdata:

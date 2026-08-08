@@ -2,7 +2,7 @@ const https = require('https');
 const http = require('http');
 
 /**
- * Helper to make HTTP GET requests and parse JSON/XML responses without heavy external dependencies.
+ * Helper to make HTTP GET requests with redirect follow support.
  */
 function fetchUrl(url, headers = {}) {
   return new Promise((resolve, reject) => {
@@ -24,23 +24,25 @@ function fetchUrl(url, headers = {}) {
 }
 
 /**
- * Strip HTML tags and decode common HTML entities from RSS snippets.
+ * Strip raw HTML tags and decode HTML entities from web and RSS snippets.
  */
-function decodeHtmlEntities(text) {
+function cleanText(text) {
   if (!text) return '';
   return text
-    .replace(/<[^>]+>/g, '')
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, '$1')
+    .replace(/<[^>]+>/g, '') // Strip HTML elements (<a href=...>, <font>, etc.)
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/&amp;/g, '&')
     .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 }
 
 /**
- * Extracts basic item objects from RSS/Atom XML string
+ * Parses item entries from raw XML
  */
 function parseRssItems(xmlText) {
   const items = [];
@@ -52,10 +54,11 @@ function parseRssItems(xmlText) {
     const descMatch = xmlItem.match(/<description>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/description>/i) || xmlItem.match(/<summary>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/summary>/i);
     const pubDateMatch = xmlItem.match(/<pubDate>([\s\S]*?)<\/pubDate>/i) || xmlItem.match(/<published>([\s\S]*?)<\/published>/i);
 
-    const title = titleMatch ? decodeHtmlEntities(titleMatch[1]) : null;
+    const title = titleMatch ? cleanText(titleMatch[1]) : null;
     const sourceUrl = linkMatch ? linkMatch[1].trim() : null;
-    let snippet = descMatch ? decodeHtmlEntities(descMatch[1]) : decodeHtmlEntities(title);
-    const publishedAt = pubDateMatch ? pubDateMatch[1].trim() : new Date().toISOString();
+    let rawSnippet = descMatch ? descMatch[1] : (titleMatch ? titleMatch[1] : '');
+    const snippet = cleanText(rawSnippet);
+    const publishedAt = pubDateMatch ? cleanText(pubDateMatch[1]) : new Date().toISOString();
 
     if (title && sourceUrl) {
       items.push({
@@ -71,7 +74,7 @@ function parseRssItems(xmlText) {
 }
 
 /**
- * Search Tavily API if key is available
+ * Search Tavily API
  */
 async function fetchFromTavily(domainQuery) {
   const apiKey = process.env.TAVILY_API_KEY;
@@ -80,7 +83,7 @@ async function fetchFromTavily(domainQuery) {
   try {
     const responseText = await new Promise((resolve, reject) => {
       const payload = JSON.stringify({
-        query: `${domainQuery} recent breakthroughs vulnerabilities news`,
+        query: `${domainQuery} recent developments breakthroughs security vulnerabilities`,
         topic: 'news',
         search_depth: 'advanced',
         max_results: 8,
@@ -107,19 +110,19 @@ async function fetchFromTavily(domainQuery) {
     if (!parsed.results) return [];
 
     return parsed.results.map((r) => ({
-      title: r.title,
-      snippet: r.content || r.title,
+      title: cleanText(r.title),
+      snippet: cleanText(r.content || r.title).slice(0, 300),
       sourceUrl: r.url,
       publishedAt: new Date().toISOString(),
     }));
   } catch (err) {
-    console.warn('[Discovery] Tavily fetch failed, falling back to RSS:', err.message);
+    console.warn('[Discovery] Tavily fetch fallback triggered:', err.message);
     return [];
   }
 }
 
 /**
- * Fetch from Google News RSS for the target domain
+ * Google News RSS Source
  */
 async function fetchFromGoogleNewsRss(domainQuery) {
   try {
@@ -134,7 +137,7 @@ async function fetchFromGoogleNewsRss(domainQuery) {
 }
 
 /**
- * Fetch top AI stories from Hacker News API
+ * Hacker News API Source
  */
 async function fetchFromHackerNews() {
   try {
@@ -148,8 +151,8 @@ async function fetchFromHackerNews() {
           const item = JSON.parse(itemRaw);
           if (item && item.url && item.title) {
             return {
-              title: item.title,
-              snippet: item.title,
+              title: cleanText(item.title),
+              snippet: cleanText(item.title),
               sourceUrl: item.url,
               publishedAt: new Date(item.time * 1000).toISOString(),
             };
@@ -169,28 +172,22 @@ async function fetchFromHackerNews() {
 
 /**
  * Main Topic Discovery function
- * @param {string} domain - e.g. "AI Security", "Machine Learning Engineer", "Robotics Engineer"
- * @returns {Promise<Array<{title: string, snippet: string, sourceUrl: string, publishedAt: string}>>}
  */
 async function discoverTopics(domain) {
   console.log(`[Discovery] Initiating live discovery for domain: "${domain}"`);
 
-  // 1. Try Tavily search API if key configured
   let candidates = await fetchFromTavily(domain);
 
-  // 2. Fetch Google News RSS for specified domain
   if (candidates.length < 3) {
     const rssCandidates = await fetchFromGoogleNewsRss(domain);
     candidates = [...candidates, ...rssCandidates];
   }
 
-  // 3. Fallback to Hacker News for general tech if candidates still low
   if (candidates.length < 3) {
     const hnCandidates = await fetchFromHackerNews();
     candidates = [...candidates, ...hnCandidates];
   }
 
-  // Deduplicate by URL and Title within candidate pool
   const seenUrls = new Set();
   const uniqueCandidates = candidates.filter((item) => {
     if (!item.sourceUrl || seenUrls.has(item.sourceUrl)) return false;

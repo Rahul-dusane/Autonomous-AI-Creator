@@ -4,14 +4,11 @@ const BREETH_API_KEY = process.env.BREETH_API_KEY;
 const BREETH_API_URL = process.env.BREETH_API_URL || 'https://api.thebreeth.com/v1';
 
 /**
- * Saves an execution episode/memory to Breeth AI
- * @param {string} agentId - ID of the agent
- * @param {string} content - Post text or topic summary
- * @param {object} metadata - Intent, topic, or rationale details
+ * Saves a memory episode to Breeth AI (POST /v1/episodes)
  */
-async function recordMemory(agentId, content, metadata = {}) {
+async function recordMemory(agentId, content) {
   if (!BREETH_API_KEY) {
-    console.warn('[Breeth AI] BREETH_API_KEY is not set. Skipping memory record.');
+    console.warn('[Breeth AI] BREETH_API_KEY is not set. Skipping write.');
     return null;
   }
 
@@ -23,50 +20,56 @@ async function recordMemory(agentId, content, metadata = {}) {
         'Authorization': `Bearer ${BREETH_API_KEY}`,
       },
       body: JSON.stringify({
-        agent_id: agentId,
         content: content,
-        metadata: metadata,
+        group_id: agentId || 'default',
+        extract_intent: true, // Enables cognitive pattern extraction in Breeth
       }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      throw new Error(`Breeth API Error: ${response.statusText}`);
+      console.error('[Breeth AI Error] Write failed:', data);
+      return null;
     }
 
-    const data = await response.json();
-    console.log(`[Breeth AI] Recorded memory episode for Agent ${agentId}`);
+    console.log(`[Breeth AI] Successfully wrote episode! Entities/edges extracted.`);
     return data;
   } catch (err) {
-    console.error('[Breeth AI Error] Failed to record memory:', err.message);
+    console.error('[Breeth AI Error] Network error during recordMemory:', err.message);
     return null;
   }
 }
 
 /**
- * Recalls relevant memories for topic deduplication and style context
- * @param {string} agentId - ID of the agent
- * @param {string} queryText - Topic or search query
+ * Searches past memories in Breeth AI (POST /v1/search)
  */
 async function recallMemories(agentId, queryText) {
   if (!BREETH_API_KEY) return [];
 
   try {
-    const response = await fetch(
-      `${BREETH_API_URL}/search?agent_id=${agentId}&q=${encodeURIComponent(queryText)}`,
-      {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${BREETH_API_KEY}`,
-        },
-      }
-    );
+    const response = await fetch(`${BREETH_API_URL}/search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${BREETH_API_KEY}`,
+      },
+      body: JSON.stringify({
+        query: queryText,
+        limit: 5,
+      }),
+    });
 
-    if (!response.ok) return [];
+    if (!response.ok) {
+      const errData = await response.json();
+      console.error('[Breeth AI Error] Search failed:', errData);
+      return [];
+    }
 
     const data = await response.json();
-    return data.results || [];
+    return data.edges || [];
   } catch (err) {
-    console.error('[Breeth AI Error] Search failed:', err.message);
+    console.error('[Breeth AI Error] Network error during recallMemories:', err.message);
     return [];
   }
 }

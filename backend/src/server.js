@@ -2,11 +2,11 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const agentRoutes = require('./routes/agentRoutes');
-const { query } = require('./db/client');
+const { query, ensureDbSchema } = require('./db/client');
 const { startAutonomousLoop } = require('./services/agentEngine');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8081;
 
 app.use(cors());
 app.use(express.json());
@@ -14,9 +14,27 @@ app.use(express.json());
 // Mount Agent API Routes
 app.use('/api/agent', agentRoutes);
 
+// Ping endpoint for keep-alive automation
+app.get('/ping', (req, res) => res.status(200).send('pong'));
+
 // Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+app.get('/health', async (req, res) => {
+  try {
+    const dbRes = await query('SELECT NOW()');
+    res.status(200).json({
+      status: 'ok',
+      database_configured: true,
+      database_time: dbRes.rows[0].now,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      database_configured: false,
+      error: err.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
 });
 
 // Boot active agents on restart (re-activates running loops if server reboots)
@@ -34,5 +52,6 @@ async function bootActiveAgents() {
 
 app.listen(PORT, async () => {
   console.log(`[Server] Autonomous AI Creator API running on port ${PORT}`);
+  await ensureDbSchema();
   await bootActiveAgents();
 });

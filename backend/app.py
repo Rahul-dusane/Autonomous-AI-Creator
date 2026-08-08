@@ -76,6 +76,11 @@ def startup_event():
         print(f"[DB] Schema initialization failed: {exc}")
 
 
+@app.get("/ping")
+def ping():
+    return "pong"
+
+
 @app.get("/health")
 def health_check():
     db_url = get_database_url()

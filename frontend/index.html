@@ -1,12 +1,602 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Autonomous AI Creator</title>
-  </head>
-  <body>
-    <h1>Autonomous AI Creator</h1>
-    <p>Frontend is running.</p>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Autonomous AI Creator — Live Feed & Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%);
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --card-border: rgba(99, 102, 241, 0.2);
+      --card-hover-border: rgba(129, 140, 248, 0.4);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.25);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --rationale-bg: rgba(30, 27, 75, 0.6);
+      --rationale-border: rgba(129, 140, 248, 0.3);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 24px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 32px;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ffffff, #c7d2fe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #34d399;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #34d399;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #34d399;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.2); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .config-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .config-bar label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-field {
+      flex: 1;
+      min-width: 260px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: #fff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 860px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .agent-active-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-md);
+    }
+
+    .agent-id-tag {
+      font-family: monospace;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #a5b4fc;
+      font-size: 13px;
+    }
+
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .feed-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .post-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .post-card:hover {
+      border-color: var(--card-hover-border);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .post-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+
+    .post-id {
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .post-text {
+      font-size: 15px;
+      color: #f1f5f9;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      white-space: pre-line;
+    }
+
+    .rationale-box {
+      background: var(--rationale-bg);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .rationale-title {
+      font-weight: 700;
+      color: #a5b4fc;
+      margin-bottom: 4px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sources-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .source-tag {
+      font-size: 12px;
+      color: #818cf8;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .source-tag:hover {
+      background: rgba(99, 102, 241, 0.25);
+      color: #ffffff;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.6;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="logo-group">
+      <div class="logo-icon">🤖</div>
+      <div>
+        <h1>Autonomous AI Creator</h1>
+        <p style="font-size: 13px; color: var(--text-muted);">24/7 Autonomous Content Engine & Feed Visualizer</p>
+      </div>
+    </div>
+    <div id="statusBadge" class="status-badge">
+      <span class="status-dot"></span>
+      <span id="statusText">API Online (/ping)</span>
+    </div>
+  </header>
+
+  <!-- Configuration Bar -->
+  <div class="config-bar">
+    <label for="apiBaseUrl">Target API Endpoint:</label>
+    <input type="text" id="apiBaseUrl" class="input-field" placeholder="https://autonomous-ai-api.onrender.com" />
+    <button class="btn btn-secondary" onclick="checkApiHealth()">Test Connection</button>
+  </div>
+
+  <div class="grid-layout">
+    <!-- Left Column: Agent Initialization -->
+    <div class="card">
+      <div class="card-title">
+        <span>⚡ Agent Controller</span>
+      </div>
+      
+      <form id="initForm" onsubmit="handleInitAgent(event)">
+        <div class="form-group">
+          <label for="personaName">Persona Name</label>
+          <input type="text" id="personaName" class="input-field" value="Ada" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="personaDomain">Expert Domain</label>
+          <input type="text" id="personaDomain" class="input-field" value="AI Security" required />
+        </div>
+
+        <button type="submit" id="initBtn" class="btn" style="width: 100%; justify-content: center;">
+          <span>Initialize Agent</span>
+        </button>
+      </form>
+
+      <div id="agentActiveBox" class="agent-active-box" style="display: none;">
+        <div style="font-size: 12px; font-weight: 700; color: #a5b4fc; text-transform: uppercase; margin-bottom: 6px;">
+          Active Agent Session
+        </div>
+        <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px;" id="activeAgentName">Ada (AI Security)</div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          Agent ID: <span id="activeAgentId" class="agent-id-tag">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Live Feed -->
+    <div class="card">
+      <div class="feed-header">
+        <div class="card-title" style="margin: 0;">
+          <span>📰 Live Feed Stream</span>
+        </div>
+        <div class="feed-controls">
+          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;" onclick="fetchFeed()">
+            🔄 Refresh
+          </button>
+        </div>
+      </div>
+
+      <div id="feedContainer">
+        <div class="empty-state">
+          <div class="empty-icon">⏳</div>
+          <p style="font-weight: 600; margin-bottom: 4px;">Initialize an Agent to View Feed</p>
+          <p style="font-size: 13px;">Submit an agent persona on the left to start autonomous post generation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Dynamic API Base URL setup
+  const defaultUrl = window.VITE_API_BASE_URL || window.location.origin.includes('localhost') 
+    ? 'http://localhost:8081' 
+    : 'https://autonomous-ai-api.onrender.com';
+  
+  const apiInput = document.getElementById('apiBaseUrl');
+  apiInput.value = localStorage.getItem('ai_creator_api') || defaultUrl;
+
+  let currentAgentId = localStorage.getItem('ai_creator_agent_id') || null;
+
+  function getApiUrl() {
+    let url = apiInput.value.trim();
+    if (url.endsWith('/')) url = url.slice(0, -1);
+    localStorage.setItem('ai_creator_api', url);
+    return url;
+  }
+
+  async function checkApiHealth() {
+    const statusText = document.getElementById('statusText');
+    const statusBadge = document.getElementById('statusBadge');
+    statusText.innerText = 'Checking API...';
+
+    try {
+      const res = await fetch(`${getApiUrl()}/ping`);
+      if (res.ok) {
+        statusText.innerText = 'API Online (/ping)';
+        statusBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+        statusBadge.style.color = '#34d399';
+      } else {
+        throw new Error(`HTTP ${res.status}`);
+      }
+    } catch (err) {
+      statusText.innerText = 'API Offline';
+      statusBadge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+      statusBadge.style.color = '#f87171';
+    }
+  }
+
+  async function handleInitAgent(e) {
+    e.preventDefault();
+    const btn = document.getElementById('initBtn');
+    const name = document.getElementById('personaName').value;
+    const domain = document.getElementById('personaDomain').value;
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner"></span> Initializing...`;
+
+    try {
+      const res = await fetch(`${getApiUrl()}/api/agent/init`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ persona: { name, domain } }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.agentId) {
+        currentAgentId = data.agentId;
+        localStorage.setItem('ai_creator_agent_id', currentAgentId);
+        
+        document.getElementById('activeAgentId').innerText = currentAgentId;
+        document.getElementById('activeAgentName').innerText = `${name} (${domain})`;
+        document.getElementById('agentActiveBox').style.display = 'block';
+
+        fetchFeed();
+      } else {
+        alert(`Error initializing agent: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      alert(`Network error initializing agent: ${err.message}`);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `Initialize Agent`;
+    }
+  }
+
+  async function fetchFeed() {
+    if (!currentAgentId) return;
+
+    const feedContainer = document.getElementById('feedContainer');
+
+    try {
+      const res = await fetch(`${getApiUrl()}/api/agent/feed?agentId=${encodeURIComponent(currentAgentId)}`);
+      const data = await res.json();
+
+      if (res.ok && Array.isArray(data.posts)) {
+        if (data.posts.length === 0) {
+          feedContainer.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-icon">⚙️</div>
+              <p style="font-weight: 600; margin-bottom: 4px;">Autonomous Engine Executing First Cycle</p>
+              <p style="font-size: 13px;">Agent ${currentAgentId} is discovering topics and generating posts. Refresh in a few seconds.</p>
+            </div>`;
+        } else {
+          feedContainer.innerHTML = data.posts.map(post => `
+            <div class="post-card">
+              <div class="post-meta">
+                <span class="post-id">${escapeHtml(post.id)}</span>
+                <span>${new Date(post.createdAt).toLocaleString()}</span>
+              </div>
+              <div class="post-text">${escapeHtml(post.text)}</div>
+              <div class="rationale-box">
+                <div class="rationale-title">Editorial Selection Rationale</div>
+                <div>${escapeHtml(post.rationale)}</div>
+              </div>
+              ${Array.isArray(post.sources) && post.sources.length > 0 ? `
+                <div class="sources-list">
+                  ${post.sources.map(src => `<a href="${escapeHtml(src)}" target="_blank" rel="noopener" class="source-tag">🔗 ${escapeHtml(getDomain(src))}</a>`).join('')}
+                </div>
+              ` : ''}
+            </div>
+          `).join('');
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch feed:', err);
+    }
+  }
+
+  function escapeHtml(text) {
+    if (!text) return '';
+    return String(text).replace(/[&<>"']/g, function(m) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+    });
+  }
+
+  function getDomain(url) {
+    try {
+      return new URL(url).hostname.replace('www.', '');
+    } catch {
+      return 'source';
+    }
+  }
+
+  // Initial loads
+  checkApiHealth();
+  if (currentAgentId) {
+    document.getElementById('activeAgentId').innerText = currentAgentId;
+    document.getElementById('agentActiveBox').style.display = 'block';
+    fetchFeed();
+  }
+
+  // Auto poll feed every 20s if agent initialized
+  setInterval(() => {
+    if (currentAgentId) fetchFeed();
+  }, 20000);
+</script>
+
+</body>
 </html>

@@ -7,35 +7,21 @@ const { startAutonomousLoop } = require('../services/agentEngine');
 /**
  * 1. Initialize Agent Endpoint
  * POST /api/agent/init
- * 
- * Request:
- * {
- *   "persona": {
- *     "name": "Ada",
- *     "domain": "AI Security"
- *   }
- * }
- * 
- * Response:
- * {
- *   "agentId": "abc-123"
- * }
  */
 router.post('/init', async (req, res) => {
   try {
-    const { persona } = req.body;
+    const { persona } = req.body || {};
 
-    // Strict Request Validation
     if (!persona || !persona.name || !persona.domain) {
       return res.status(400).json({
         error: 'Invalid payload. "persona.name" and "persona.domain" are required fields.',
       });
     }
 
-    const name = persona.name.trim();
-    const domain = persona.domain.trim();
+    const name = String(persona.name).trim();
+    const domain = String(persona.domain).trim();
 
-    // Check if an agent with this name and domain already exists
+    // Check if agent already exists
     const existingRes = await query(
       'SELECT id FROM agents WHERE name = $1 AND domain = $2 LIMIT 1',
       [name, domain]
@@ -45,23 +31,34 @@ router.post('/init', async (req, res) => {
 
     if (existingRes.rows.length > 0) {
       agentId = existingRes.rows[0].id;
-      // Re-activate agent if necessary
-      await query('UPDATE agents SET is_active = TRUE, updated_at = CURRENT_TIMESTAMP WHERE id = $1', [agentId]);
+      await query(
+        'UPDATE agents SET is_active = TRUE, updated_at = CURRENT_TIMESTAMP WHERE id = $1',
+        [agentId]
+      );
       console.log(`[API Init] Re-initialized existing Agent "${name}" (${agentId})`);
     } else {
       agentId = `agent-${uuidv4().slice(0, 8)}`;
-      // Save agent to database using stored procedure
-      await query(
-        'CALL sp_init_agent($1, $2, $3, $4)',
-        [agentId, name, domain, JSON.stringify(persona)]
-      );
+
+      // Attempt stored procedure first, fallback to standard direct INSERT if procedure/columns differ
+      try {
+        await query(
+          'CALL sp_init_agent($1::text, $2::text, $3::text, $4::jsonb)',
+          [agentId, name, domain, JSON.stringify(persona)]
+        );
+      } catch (spErr) {
+        console.warn('[API Init] Stored procedure sp_init_agent failed, executing fallback INSERT:', spErr.message);
+        await query(
+          'INSERT INTO agents (id, name, domain, persona, is_active) VALUES ($1, $2, $3, $4::jsonb, TRUE)',
+          [agentId, name, domain, JSON.stringify(persona)]
+        );
+      }
+
       console.log(`[API Init] Created new Agent "${name}" (${agentId})`);
     }
 
-    // Spawn autonomous background loop (runs immediately + every 1 hour)
+    // Start background autonomous cycle
     startAutonomousLoop(agentId, 60 * 60 * 1000);
 
-    // Return response adhering strictly to API spec
     return res.status(200).json({
       agentId: agentId,
     });
@@ -76,19 +73,6 @@ router.post('/init', async (req, res) => {
 /**
  * 2. Retrieve Feed Endpoint
  * GET /api/agent/feed?agentId=abc-123
- * 
- * Response:
- * {
- *   "posts": [
- *     {
- *       "id": "p7",
- *       "createdAt": "2026-08-07T10:30:00Z",
- *       "text": "...",
- *       "rationale": "...",
- *       "sources": ["https://..."]
- *     }
- *   ]
- * }
  */
 router.get('/feed', async (req, res) => {
   try {
@@ -100,11 +84,22 @@ router.get('/feed', async (req, res) => {
       });
     }
 
-    // Retrieve posts from DB using fn_get_feed(p_agent_id)
-    const dbRes = await query('SELECT * FROM fn_get_feed($1)', [agentId]);
+    let dbRows = [];
 
-    // Format feed adhering strictly to the ISO 8601 UTC and required API spec
-    const formattedPosts = dbRes.rows.map((row) => {
+    // Attempt stored function call with explicit type cast $1::text
+    try {
+      const dbRes = await query('SELECT * FROM fn_get_feed($1::text)', [agentId]);
+      dbRows = dbRes.rows;
+    } catch (fnErr) {
+      console.warn('[API Feed] fn_get_feed failed, falling back to direct posts query:', fnErr.message);
+      const fallbackRes = await query(
+        'SELECT id, text, rationale, sources, created_at FROM posts WHERE agent_id = $1 ORDER BY created_at DESC',
+        [agentId]
+      );
+      dbRows = fallbackRes.rows;
+    }
+
+    const formattedPosts = dbRows.map((row) => {
       let parsedSources = [];
       if (Array.isArray(row.sources)) {
         parsedSources = row.sources;
@@ -116,9 +111,11 @@ router.get('/feed', async (req, res) => {
         }
       }
 
+      const rawDate = row.created_at || row.createdat || row.createdAt || new Date();
+
       return {
         id: row.id,
-        createdAt: new Date(row.createdat || row.created_at).toISOString(),
+        createdAt: new Date(rawDate).toISOString(),
         text: row.text,
         rationale: row.rationale,
         sources: parsedSources,
@@ -129,9 +126,9 @@ router.get('/feed', async (req, res) => {
       posts: formattedPosts,
     });
   } catch (err) {
-    console.error('[API Feed Error] Failed to retrieve feed:', err);
+    console.error('[API Feed Error] Failed to retrieve feed:', err.message);
     return res.status(500).json({
-      error: 'Internal server error retrieving feed.',
+      posts: [],
     });
   }
 });

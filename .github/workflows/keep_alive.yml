@@ -1,0 +1,13 @@
+name: Keep Render Container Awake
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API Endpoint
+        run: curl -s https://autonomous-ai-api.onrender.com/ping > /dev/null

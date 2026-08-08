@@ -1,52 +1,54 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: aicreator-postgres
-    restart: unless-stopped
+    container_name: ai_creator_db
+    restart: always
     environment:
-      POSTGRES_USER: aicreator
-      POSTGRES_PASSWORD: aicreator
-      POSTGRES_DB: aicreator_db
+      POSTGRES_DB: ${DB_NAME:-ai_creator_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-your_secure_db_password}
     ports:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U aicreator -d aicreator_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-ai_creator_db}"]
       interval: 5s
       timeout: 5s
       retries: 5
 
-  backend:
+  api:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: aicreator-backend
-    restart: unless-stopped
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: ai_creator_api
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: 8081
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-ai_creator_db}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-your_secure_db_password}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
     depends_on:
       postgres:
         condition: service_healthy
-    env_file: .env
-    environment:
-      DATABASE_URL: postgres://aicreator:${DB_PASSWORD}@postgres:5432/aicreator_db
-    ports:
-      - "8080:8080"
-    volumes:
-      - ./backend/storage:/app/storage    # generated images/video/gif persist here
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: aicreator-frontend
-    restart: unless-stopped
-    depends_on:
-      - backend
+    container_name: ai_creator_frontend
+    restart: always
     ports:
       - "3000:3000"
-    environment:
-      VITE_API_URL: http://backend:8080
+    depends_on:
+      - api
 
 volumes:
   pgdata:

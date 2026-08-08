@@ -1,6 +1,7 @@
 const { query } = require('../db/client');
 const { discoverTopics } = require('./discoveryService');
-const { evaluateAndSelectTopic, generatePostContent } = require('./aiService');
+const { evaluateAndSelectTopic, generatePostContent } = require('./aiServices');
+const { recordMemory, recallMemories } = require('./breethService');
 const { v4: uuidv4 } = require('uuid');
 
 // Active background cron timers mapped by agentId
@@ -99,13 +100,21 @@ async function runAgentCycle(agentId) {
 
     const winningTopic = editorialResult.selectedTopic;
 
-    // 7. Generate Persona Post & Rationale
+    // 7. Breeth Memory Context Check: avoid reusing topics already reasoned about
+    const memoryContext = await recallMemories(agent.id, `${winningTopic.title} ${winningTopic.snippet || ''}`);
+    if (memoryContext && memoryContext.length > 0) {
+      console.log(`[Breeth AI] Topic "${winningTopic.title}" was already covered in prior reasoning for agent ${agent.id}. Skipping duplicate post.`);
+      await finishCycle(logId, 'skipped', `Breeth recall found prior reasoning for topic: ${winningTopic.title}`);
+      return;
+    }
+
+    // 8. Generate Persona Post & Rationale
     const generatedPost = await generatePostContent(
       { name: agent.name, domain: agent.domain },
       winningTopic
     );
 
-    // 8. Transactional Persistence to PostgreSQL
+    // 9. Transactional Persistence to PostgreSQL
     const postId = `post-${uuidv4().slice(0, 8)}`;
     await query(
       `CALL sp_save_post($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -120,6 +129,13 @@ async function runAgentCycle(agentId) {
         JSON.stringify({ score: winningTopic.score || 8.0 }),
       ]
     );
+
+    // 10. Persist the completed post and rationale into Breeth memory graph
+    await recordMemory(agent.id, generatedPost.text, {
+      topic: winningTopic.title,
+      rationale: generatedPost.rationale,
+      domain: agent.domain,
+    });
 
     console.log(`[AgentEngine] SUCCESS: Published new post [${postId}] for Agent "${agent.name}" (${agent.id})`);
     await finishCycle(logId, 'success', `Successfully created post ${postId}`);

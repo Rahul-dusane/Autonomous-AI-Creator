@@ -1,22 +1,21 @@
-FROM python:3.12-slim
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends ffmpeg && \
-    rm -rf /var/lib/apt/lists/*
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY package*.json ./
+RUN npm install --omit=dev
 
-RUN useradd --create-home --shell /bin/bash appuser && \
-    mkdir -p /app/storage && \
-    chown -R appuser:appuser /app
+COPY backend ./backend
 
-COPY app.py ./
+FROM node:20-alpine AS runner
 
-USER appuser
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/backend ./backend
+WORKDIR /app/backend
 
 EXPOSE 8080
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["node", "src/server.js"]

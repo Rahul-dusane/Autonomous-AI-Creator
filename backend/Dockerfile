@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install --omit=dev
 
-COPY backend ./backend
+COPY . .
 
 FROM node:20-alpine AS runner
 
@@ -13,9 +13,8 @@ WORKDIR /app
 ENV NODE_ENV=production
 
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/backend ./backend
-WORKDIR /app/backend
+COPY --from=builder /app ./
 
-EXPOSE 8080
+EXPOSE 8081
 
 CMD ["node", "src/server.js"]

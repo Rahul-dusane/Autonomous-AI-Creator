@@ -3129,3 +3129,187 @@ The API returns an agentId.
 Feed posts contain unique IDs, ISO 8601 timestamps, generated text, editorial rationale, and source URLs.
 
 The database and autonomous agent infrastructure are operational according to the provided verification output.
+
+Railway Free Deployment vs. Recommended $0 Deployment
+
+Railway Free Deployment
+
+Deploying on Railway will not reliably work for 15–20 days on the free option.
+
+Why Railway May Shut Down Within 2–5 Days
+
+1. Credit Exhaustion
+
+Railway's free trial gives you a one-time $5 credit.
+
+Once this credit is exhausted, the services can be suspended.
+
+2. Always-On Container Cost
+
+The autonomous agent runs continuously in a loop, for example through:
+
+setInterval(...)
+
+Because the application is running as a continuous Docker process and maintains a database connection, it can consume CPU and RAM 24/7.
+
+3. Estimated Usage
+
+An always-on backend container together with a PostgreSQL database can consume the available trial credit relatively quickly.
+
+The provided estimate is approximately:
+
+2–5 days
+
+Once the credit reaches $0, Railway may suspend the services, causing the live URL to stop responding.
+
+Recommended $0 Solution for 15–20 Days
+
+To keep the project live for 15–20 days, or potentially longer, without paying for infrastructure, use the following deployment architecture.
+
+1. Backend & Autonomous Loop — Render
+
+Deploy the backend and autonomous agent loop using:
+
+Render — Free Web Service
+
+Keep-Alive Strategy
+
+Configure an external keep-alive service such as:
+
+cron-job.org
+
+Set it to call:
+
+GET /api/agent/feed
+
+every:
+
+8–10 minutes
+
+The purpose is to prevent the Render service from reaching its approximately 15-minute idle-sleep period.
+
+Expected infrastructure cost:
+
+$0
+
+2. Database — Neon or Supabase
+
+Use a free-tier PostgreSQL provider such as:
+
+Neon
+
+Supabase
+
+These provide PostgreSQL databases under their free tiers and avoid depending on a short-lived Railway trial credit.
+
+3. Frontend — Vercel
+
+Deploy the frontend using:
+
+Vercel — Hobby Tier
+
+The Hobby Tier is intended to provide a free deployment option for the frontend.
+
+Recommended Architecture
+
+                    ┌─────────────────────┐
+                    │      Frontend       │
+                    │       Vercel        │
+                    │   Hobby / Free      │
+                    └──────────┬──────────┘
+                               │
+                               │ API Requests
+                               ▼
+                    ┌─────────────────────┐
+                    │       Backend       │
+                    │       Render        │
+                    │   Free Web Service  │
+                    └──────────┬──────────┘
+                               │
+                               │ PostgreSQL
+                               ▼
+                    ┌─────────────────────┐
+                    │      Database       │
+                    │   Neon / Supabase   │
+                    │    Free PostgreSQL  │
+                    └─────────────────────┘
+
+                               ▲
+                               │
+                         Keep-Alive Ping
+                               │
+                    ┌─────────────────────┐
+                    │    cron-job.org     │
+                    │     Every 8–10 min  │
+                    └─────────────────────┘
+
+Deployment Stack Summary
+
+Component
+
+Recommended Service
+
+Tier
+
+Purpose
+
+Frontend
+
+Vercel
+
+Hobby / Free
+
+Host the React frontend
+
+Backend
+
+Render
+
+Free Web Service
+
+Run API and autonomous agent
+
+Database
+
+Neon / Supabase
+
+Free
+
+Host PostgreSQL
+
+Keep-Alive
+
+cron-job.org
+
+Free
+
+Periodically ping backend
+
+Railway
+
+Not recommended
+
+Free Trial
+
+Trial credits may be exhausted quickly
+
+Final Recommendation
+
+For a 15–20 day evaluation period, the recommended $0 architecture is:
+
+Frontend
+   ↓
+Vercel
+   ↓
+Render Backend
+   ↓
+Neon / Supabase PostgreSQL
+
+cron-job.org
+   ↓
+GET /api/agent/feed
+Every 8–10 minutes
+
+This stack is intended to keep the project available throughout the evaluation period without relying on Railway's limited trial credit.
+
+Note: The deployment estimates and free-tier behavior above reflect the provided deployment plan. Actual provider limits, sleeping behavior, and free-tier policies can change over time and should be checked before deploymen

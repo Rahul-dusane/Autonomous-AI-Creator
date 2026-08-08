@@ -451,10 +451,9 @@
 </div>
 
 <script>
-  // Dynamic API Base URL setup
-  const defaultUrl = window.VITE_API_BASE_URL || window.location.origin.includes('localhost') 
-    ? 'http://localhost:8081' 
-    : 'https://autonomous-ai-api.onrender.com';
+  // Dynamic API Base URL setup (supports 127.0.0.1, localhost, Vite ports 5173/3000, and production cloud)
+  const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const defaultUrl = window.VITE_API_BASE_URL || (isLocalHost ? 'http://localhost:8081' : 'https://autonomous-ai-api.onrender.com');
   
   const apiInput = document.getElementById('apiBaseUrl');
   apiInput.value = localStorage.getItem('ai_creator_api') || defaultUrl;

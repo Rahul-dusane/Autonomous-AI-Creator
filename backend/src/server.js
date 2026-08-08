@@ -8,7 +8,17 @@ const { startAutonomousLoop } = require('./services/agentEngine');
 const app = express();
 const PORT = process.env.PORT || 8081;
 
-app.use(cors());
+// Robust CORS Configuration supporting all local dev origins (127.0.0.1:5500, localhost:5173, localhost:3000) and cloud callers
+const corsOptions = {
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  credentials: false,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 
 // Mount Agent API Routes

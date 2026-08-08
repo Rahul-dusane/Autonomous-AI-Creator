@@ -13,7 +13,7 @@ services:
       - pgdata:/var/lib/postgresql/data
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U aicreator"]
+      test: ["CMD-SHELL", "pg_isready -U aicreator -d aicreator_db"]
       interval: 5s
       timeout: 5s
       retries: 5

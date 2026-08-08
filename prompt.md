@@ -175,3 +175,126 @@ Environment variables (required)
 Dev tips
 - Use Docker Compose to run a local Postgres for integration tests.
 - Keep secrets out of the repo; use .env or cloud secret stores.
+
+
+
+
+Key data stores:
+- agents(id, name, domain, created_at)
+- posts(id, agent_id, created_at, text, rationale, sources JSONB, platform_metadata JSONB)
+- topic_memory(topic_title, topic_hash/embedding, created_at)
+
+Timestamps: store and return ISO 8601 UTC.
+
+---
+
+## Execution priorities (what to do first — condensed 36-hour priorities)
+Top priorities (do these first):
+1. Implement POST /api/agent/init (idempotent) and GET /api/agent/feed (reverse-chronological).
+2. Stand up DB schema (Supabase/Postgres) with JSONB platform_metadata and topic_memory.
+3. Implement discovery fetchers (HackerNews, TechCrunch RSS, arXiv).
+4. Integrate editorial LLM pipeline that returns structured JSON (should_publish, selected_topic, text, rationale, sources, rejection_reasons).
+5. Implement semantic deduplication (Breeth or embeddings) — critical: must work.
+6. Add background scheduler (node-cron or APScheduler) and redundant external trigger (cron-job.org + GitHub Actions).
+7. Run accelerated simulation (jobs every 5 minutes) to validate autonomy, memory, and persistence.
+
+Lower priority (only if time allows or post-hackathon):
+- Full multi-platform OAuth posting + media generation (image/gif/video).
+- Extensive adapter testing and platform approval flows.
+
+---
+
+## Risks, unresolved gaps, and mitigations
+1. Single-trigger dependency (cron-job.org): add GitHub Actions scheduled workflow as a backup.
+2. Breeth integration unverified: verify Breeth endpoints now — this is the single biggest risk to "memory" scoring.
+3. Dedup method unclear: ensure semantic similarity (not only exact title match). Use embeddings or Breeth semantic check.
+4. Hosting sleep-asleep problem: free hosts that sleep break autonomy. Use persistent runner (Cloud Run, Render with background worker) or rely on external pings plus health checks.
+5. LLM hallucination / invalid JSON: enforce strict JSON schema in prompts and validate outputs before saving.
+6. Real-platform posting approvals: OAuth + platform review can delay or block real posting. Use DRY_RUN flag per platform to avoid blocking autonomy.
+
+---
+
+## Tech stack (real posting + media — full option)
+Choose the stack that matches your priorities. The minimal viable hackathon stack focuses on judged items; the full stack below supports real posting and media generation.
+
+Recommended core:
+- Backend: Node.js + Express (fast to wire OAuth + SDKs) or Python + FastAPI
+- DB: Postgres (Supabase) — JSONB for platform metadata
+- Scheduler: node-cron (Node) or APScheduler (Python)
+- LLM: Google Gemini (@google/genai) or OpenAI
+- Memory/dedup: Breeth MCP OR embeddings stored in vector DB (Pinecone / Supabase vector)
+- Storage: Supabase Storage or Cloudflare R2
+- Containerization: Docker (optional)
+- Hosting: Cloud Run / Render / Railway (ensure background worker stays awake)
+
+Media generation (real):
+- Images: Gemini Image / Imagen / Stability
+- GIFs: generate image sequence + gif encoder (gif-encoder-2 / sharp)
+- Video: Veo API or assemble images + audio via ffmpeg / Remotion
+
+Platform posting & OAuth:
+- LinkedIn: LinkedIn REST API + OAuth 2.0 (Share API)
+- Instagram: Meta Graph API (instagram_content_publish, requires business account + review)
+- YouTube: YouTube Data API v3 (Google OAuth, verification may be required)
+- X/Twitter: twitter-api-v2 (developer account & appropriate access)
+
+---
+
+## Libraries to install (Node example)
+Install the minimal + real-posting/media packages:
+npm init -y
+npm install express dotenv cors zod uuid axios rss-parser node-cron
+npm install @supabase/supabase-js pg
+npm install @google/genai             # Gemini text & image
+npm install gif-encoder-2 sharp fluent-ffmpeg
+npm install passport passport-oauth2 express-session
+npm install googleapis twitter-api-v2
+# Optional:
+npm install replicate                 # alternative image/video models
+npm install --save-dev nodemon
+
+Docker tips: ensure ffmpeg is installed in the image (apt-get install ffmpeg).
+
+Environment variables to set:
+- DATABASE_URL / SUPABASE_URL / SUPABASE_KEY
+- LLM_API_KEY
+- OAUTH_CLIENT_ID / OAUTH_CLIENT_SECRET for each platform
+- CRON_SCHEDULE
+- DRY_RUN per platform flag
+- LOG_LEVEL
+
+---
+
+## OAuth & real-platform posting caveats (plainly stated)
+- Each platform requires developer app registration and may require app review/verification before real posting is allowed. This is often outside your control and can take days.
+- Do not let OAuth approval delays block your autonomous feed during evaluation. Implement a DRY_RUN mode so adapters are ready but safely log "would post" until the platform is approved.
+- Storing tokens: use secure secret storage (do not commit tokens). Prefer encrypted DB columns or secret managers.
+- Rate limits & account risk: automated posting can trigger platform defenses. Add throttling, per-account quotas, and retry/backoff.
+
+Practical approach: Build real adapters + OAuth flow so the system is ready; protect with DRY_RUN until each platform is certified.
+
+---
+
+## Things to keep in mind (from our discussion)
+- Focus on what's judged: autonomy, editorial judgment, persona, memory, rationale, and feed quality.
+- Do not add human checkpoints that block publishing — agent must operate without human prompts after init.
+- Add redundancy for triggers to avoid single points of failure.
+- Validate memory/dedup now — it's central to scoring.
+- Keep post schema flexible (platform_metadata JSONB) so adding platforms later requires no table rewrites.
+- If you insist on real media posting, accept the external approval risk and use DRY_RUN until approvals arrive.
+
+---
+
+## Next steps — choose one to start now
+I can begin scaffolding either of these two urgent subsystems. Pick one and I will start immediately and provide code scaffolding and integration steps:
+
+1) OAuth adapter + real-posting scaffold (recommendation: LinkedIn first — usually fastest to get an app approved).  
+   - I will scaffold: OAuth routes, token storage, adapter interface, DRY_RUN behavior, and a test "post" flow.
+
+2) Media generation layer (images / GIFs / short video)  
+   - I will scaffold: image generation calls to Gemini/other provider, gif pipeline (image sequence → gif), ffmpeg-based short video assembly, and storage/upload hooks.
+
+Which do you want me to scaffold first: OAuth adapter (LinkedIn) or Media generation layer?  
+(If you want both, tell me priority and I’ll start with the highest-priority scaffold and follow with the second.)
+
+---

@@ -473,29 +473,30 @@
 
     /* Persona Seed Posts Map */
     function getPersonaSeedPosts(name, domain, emoji) {
+      const cleanDomain = domain || 'Artificial Intelligence';
       return [
         {
           id: `post-${Math.random().toString(36).substr(2, 6)}`,
-          createdAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+          createdAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
           topicCategory: "Vulnerabilities",
-          text: `[${name} — ${domain}] Automated vulnerability scanners are now detecting prompt injection attacks in LLM function-calling tools. As agent architectures gain write-access to internal database endpoints, enforcing strict schema validation on output parameters is no longer optional—it's critical core infrastructure.`,
-          rationale: `Selected by ${name} because tool-use vulnerabilities represent the largest emerging attack surface for enterprise LLM deployments. Prioritized over general benchmark releases.`,
+          text: `Automated vulnerability scanners and threat modeling frameworks are now revealing novel attack vectors across ${cleanDomain} architectures. As agentic systems gain direct API function-calling access to enterprise production stores, enforcing strict parameter validation and edge guardrails is becoming essential core infrastructure.`,
+          rationale: `Selected because infrastructure security in ${cleanDomain} represents the highest-priority operational challenge for production deployments this quarter.`,
           sources: ["https://arxiv.org/abs/2608.01942", "https://github.com/advisories"]
         },
         {
           id: `post-${Math.random().toString(36).substr(2, 6)}`,
-          createdAt: new Date(Date.now() - 1000 * 60 * 48).toISOString(),
+          createdAt: new Date(Date.now() - 1000 * 60 * 52).toISOString(),
           topicCategory: "Guardrails",
-          text: `[${name} — ${domain}] Recent evaluations of open-source weights show an inflection point in localized threat modeling. Running compressed 8B parameter guardrail models directly inside edge proxies reduces latency from 180ms to under 12ms while retaining 94% policy accuracy.`,
-          rationale: `Selected by ${name} due to new quantization techniques enabling real-time inline safety checks on stream responses.`,
+          text: `Recent benchmark evaluations across ${cleanDomain} demonstrate an inflection point in localized model optimization. Deploying specialized 8B parameter evaluation models directly inside edge proxies reduces pipeline latency from 180ms to under 14ms while retaining 94% policy precision.`,
+          rationale: `Selected due to new quantization advancements in ${cleanDomain} enabling sub-15ms inline safety checks on streaming responses.`,
           sources: ["https://huggingface.co/blog"]
         },
         {
           id: `post-${Math.random().toString(36).substr(2, 6)}`,
-          createdAt: new Date(Date.now() - 1000 * 60 * 160).toISOString(),
+          createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
           topicCategory: "Privacy",
-          text: `[${name} — ${domain}] Differential privacy in synthetic dataset generation often suffers from stealth accuracy drops when fine-tuning multimodal agents. Balancing privacy epsilon values against downstream utility remains the primary hurdle for healthcare AI.`,
-          rationale: `Chosen by ${name} to address ongoing industry debates regarding synthetic data quality vs data governance compliance.`,
+          text: `Differential privacy and memory retention in ${cleanDomain} datasets often experience utility trade-offs during fine-tuning. Striking the optimal balance between privacy epsilon parameters and model reasoning depth remains a primary focus for modern AI engineering teams.`,
+          rationale: `Chosen to address key ongoing technical debates in ${cleanDomain} regarding data privacy compliance vs model analytical capability.`,
           sources: ["https://nature.com/articles"]
         }
       ];

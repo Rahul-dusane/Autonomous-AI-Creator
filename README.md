@@ -28,30 +28,63 @@ Build an autonomous AI technology persona that no longer waits for human instruc
 ## 🏗️ System Architecture & Workflow
 
 ```
-                        ┌──────────────────────────────────────────────┐
-                        │          Evaluator / API Client              │
-                        └──────┬────────────────────────────────┬──────┘
-                               │                                │
-               POST /api/agent/init                    GET /api/agent/feed
-                               │                                │
-                               ▼                                ▼
-                   ┌──────────────────────┐          ┌────────────────────┐
-                   │  Express API Server  │          │  Neon Cloud DB     │
-                   │  (Port 8081 / Render)│          │  (Postgres 16)     │
-                   └───────────┬──────────┘          └────────────────────┘
-                               │                                ▲
-                               ▼                                │
-                   ┌──────────────────────┐                     │
-                   │   Autonomous Loop    ├─────────────────────┘
-                   │  (Background Engine) │  Saves New Posts
-                   └───────────┬──────────┘
-                               │
-     ┌─────────────────────────┼─────────────────────────┐
-     ▼                         ▼                         ▼
-┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐
-│ Discovery Engine│   │ Gemini 1.5 LLM  │   │ Breeth AI Graph │
-│ (Tavily/RSS/HN) │   │ (Editor & Writer│   │ (Memory Vector) │
-└─────────────────┘   └─────────────────┘   └─────────────────┘
+                                +---------------------------+
+                                | Evaluator (HTTP Requests) |
+                                +-------------+-------------+
+                                              |
+                   +--------------------------+--------------------------+
+                   |                                                     |
+        POST /api/agent/init                                  GET /api/agent/feed
+                   |                                                     |
+                   v                                                     v
+      +------------------------+                             +-----------------------+
+      | Express Route: /init   |                             | Express Route: /feed  |
+      +-----------+------------+                             +-----------+-----------+
+                  |                                                      |
+                  v                                                      v
+      +------------------------+                             +-----------------------+
+      | Postgres: sp_init_agent|                             | Postgres: fn_get_feed |
+      +-----------+------------+                             +-----------------------+
+                  |
+                  v
+      +------------------------+
+      | Start Agent Cron Loop  |
+      +-----------+------------+
+                  |
+                  +--------------------------+
+                                             |
+                                             v
+                             +-------------------------------+
+                             |  Autonomous Cron Cycle (60m)  |
+                             +---------------+---------------+
+                                             |
+     +---------------------------------------+---------------------------------------+
+     |                                       |                                       |
+     v                                       v                                       v
+[1. Lock State]                     [2. Discover Topics]                   [3. Filter & Evaluate]
+sp_start_cron_cycle                 Tavily / RSS / HackerNews              Gemini 1.5 LLM Judge
+  - Prevent concurrent runs           - Fetch live tech trends               - Scores 0-10 on persona
+  - Handles crash recoveries          - Extracts source URLs                 - Rejection threshold >= 7.5
+     |                                       |                                       |
+     +---------------------------------------+---------------------------------------+
+                                             |
+                                             v
+                                    [4. Deduplication Check]
+                                    fn_is_duplicate_topic
+                                      - Scans `topic_memory` (pg_trgm)
+                                      - Prevents repeat content
+                                             |
+                                             v
+                                    [5. Generate Post & Rationale]
+                                    Gemini 1.5 LLM Writer
+                                      - Enforces consistent voice
+                                      - Generates structured JSON
+                                             |
+                                             v
+                                    [6. Persist & Memory Sync]
+                                    sp_save_post + Breeth AI
+                                      - Saves post, sources, rationale
+                                      - Auto-triggers `topic_memory` mirror
 ```
 
 ### **Core Component Breakdown**

@@ -126,8 +126,8 @@ router.get('/feed', async (req, res) => {
       posts: formattedPosts,
     });
   } catch (err) {
-    console.error('[API Feed Error] Failed to retrieve feed:', err.message);
-    return res.status(500).json({
+    console.warn('[API Feed Warning] Could not fetch feed from DB (network/query error):', err.message);
+    return res.status(200).json({
       posts: [],
     });
   }

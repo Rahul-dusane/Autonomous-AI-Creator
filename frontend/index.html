@@ -638,6 +638,9 @@
     }
 
     function switchPersonaPreset(name, domain, emoji) {
+      // Reset active topic filter back to All Posts on persona switch
+      filterByTopic('ALL');
+
       const buttons = document.querySelectorAll('#persona-pill-grid button');
       buttons.forEach(btn => {
         if (btn.innerText.includes(name)) {

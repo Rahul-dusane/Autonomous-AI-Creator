@@ -20,15 +20,6 @@
             sans: ['"Plus Jakarta Sans"', '-apple-system', 'sans-serif'],
             outfit: ['"Outfit"', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
-          },
-          colors: {
-            brand: {
-              50: '#eef2ff',
-              100: '#e0e7ff',
-              500: '#6366f1',
-              600: '#4f46e5',
-              700: '#4338ca',
-            }
           }
         }
       }
@@ -47,7 +38,7 @@
     ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
-    /* Cross-Browser Flawless Gradient Text (No Solid Box Bug) */
+    /* Cross-Browser Flawless Gradient Text */
     .text-gradient {
       background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 40%, #f472b6 100%);
       -webkit-background-clip: text !important;
@@ -75,20 +66,6 @@
     .glass-card:hover {
       border-color: rgba(99, 102, 241, 0.3);
       box-shadow: 0 16px 36px -10px rgba(99, 102, 241, 0.12);
-      transform: translateY(-2px);
-    }
-
-    .glass-card-interactive {
-      background: rgba(15, 23, 42, 0.5);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.2s ease;
-    }
-
-    .glass-card-interactive:hover {
-      background: rgba(30, 41, 59, 0.7);
-      border-color: rgba(129, 140, 248, 0.4);
       transform: translateY(-2px);
     }
 
@@ -127,7 +104,7 @@
               <span id="nav-status-text">Server Online (/ping)</span>
             </span>
           </div>
-          <p class="text-[11px] text-slate-400 hidden sm:block">Zero-Prompt Intelligence & Autonomous Feed Engine</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Zero-Prompt Autonomous AI Creator Engine</p>
         </div>
       </div>
 
@@ -143,7 +120,7 @@
       <div class="flex items-center gap-2">
         <button onclick="openGuideModal()" class="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95">
           <i data-lucide="help-circle" class="w-4 h-4 text-indigo-400"></i>
-          <span>Architecture Guide</span>
+          <span>System Info</span>
         </button>
 
         <button id="open-settings-btn" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-all text-xs font-medium" title="API Configuration">
@@ -163,138 +140,27 @@
   <!-- MAIN WORKSPACE -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-    <!-- HERO ONBOARDING CARD (PERFECT GRADIENT TEXT & CLEAN DESIGN) -->
-    <section id="onboarding-banner" class="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden border border-slate-800 shadow-2xl">
-      
-      <button onclick="dismissOnboarding()" class="absolute top-5 right-5 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition-all" title="Dismiss">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-
-      <div class="max-w-4xl space-y-5">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-300">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
-          <span>Zero-Prompt Autonomous Intelligence Engine</span>
-        </div>
-
-        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug font-outfit">
-          An AI Persona that discovers, evaluates, and writes technical commentary <span class="text-gradient">24/7 without waiting for prompts</span>.
-        </h2>
-
-        <!-- 3 Steps -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
-          
-          <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 space-y-1 hover:border-indigo-500/30 transition-all">
-            <div class="flex items-center gap-2 text-xs font-bold text-indigo-300">
-              <span class="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-[11px] text-indigo-400">1</span>
-              <span>Select an AI Persona</span>
-            </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Choose Ada (AI Security), Marcus (ML Systems), or configure a custom persona identity.
-            </p>
-          </div>
-
-          <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 space-y-1 hover:border-emerald-500/30 transition-all">
-            <div class="flex items-center gap-2 text-xs font-bold text-emerald-300">
-              <span class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-[11px] text-emerald-400">2</span>
-              <span>Automated Discovery</span>
-            </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Scans Tavily & RSS, rejects duplicates, and scores quality (≥ 7.5) via Gemini LLM.
-            </p>
-          </div>
-
-          <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 space-y-1 hover:border-purple-500/30 transition-all">
-            <div class="flex items-center gap-2 text-xs font-bold text-purple-300">
-              <span class="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center text-[11px] text-purple-400">3</span>
-              <span>Inspect AI Rationale</span>
-            </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Click <span class="text-indigo-300 font-semibold">"Why selected by AI?"</span> on any card to view why the topic was selected!
-            </p>
-          </div>
-
-        </div>
-
-        <div class="pt-2 flex flex-wrap items-center gap-3">
-          <button onclick="forceAutonomousCycle()" class="px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-900 rounded-xl text-xs font-bold transition-all shadow-lg flex items-center gap-2 active:scale-95">
-            <i data-lucide="zap" class="w-4 h-4 fill-slate-900 text-slate-900"></i>
-            <span>Test Live Discovery Now</span>
-          </button>
-
-          <button onclick="openGuideModal()" class="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-800 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition-all">
-            System Architecture
-          </button>
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- SENIOR DASHBOARD METRICS BAR -->
-    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="glass-card-interactive rounded-2xl p-4 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
-          <i data-lucide="activity" class="w-5 h-5"></i>
-        </div>
-        <div>
-          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Server Latency</div>
-          <div class="text-sm font-extrabold text-white mt-0.5 font-mono" id="metric-latency">18ms</div>
-        </div>
-      </div>
-
-      <div class="glass-card-interactive rounded-2xl p-4 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-          <i data-lucide="shield-check" class="w-5 h-5"></i>
-        </div>
-        <div>
-          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Deduplication</div>
-          <div class="text-sm font-extrabold text-emerald-400 mt-0.5 font-mono">100% Filtered</div>
-        </div>
-      </div>
-
-      <div class="glass-card-interactive rounded-2xl p-4 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
-          <i data-lucide="brain" class="w-5 h-5"></i>
-        </div>
-        <div>
-          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">AI Evaluator</div>
-          <div class="text-sm font-extrabold text-white mt-0.5 font-mono">Gemini 2.0 Flash</div>
-        </div>
-      </div>
-
-      <div class="glass-card-interactive rounded-2xl p-4 flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-          <i data-lucide="database" class="w-5 h-5"></i>
-        </div>
-        <div>
-          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Memory Store</div>
-          <div class="text-sm font-extrabold text-white mt-0.5 font-mono">Breeth AI Graph</div>
-        </div>
-      </div>
-    </section>
-
-
     <!-- BENTO GRID SECTION -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <!-- LEFT 7 COLS: PERSONA SELECTOR & TOPIC HUB -->
+      <!-- LEFT 7 COLS: PERSONA SELECTOR & DOMAIN HUB -->
       <div class="lg:col-span-7 glass-card rounded-3xl p-6 shadow-2xl flex flex-col justify-between space-y-6">
         
         <!-- Header -->
         <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
           <div>
             <div class="flex items-center gap-2">
-              <h2 class="text-base font-bold text-white tracking-tight font-outfit">AI Identity & Domain Selector</h2>
+              <h2 class="text-base font-bold text-white tracking-tight font-outfit">AI Identity & Domain Hub</h2>
               <span class="px-2.5 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-[10px] font-bold uppercase tracking-wider">Interactive</span>
             </div>
-            <p class="text-xs text-slate-400 mt-1">Click a persona card below to instantly redirect the AI research scope</p>
+            <p class="text-xs text-slate-400 mt-1">Click a persona card to switch the AI research domain and feed stream</p>
           </div>
         </div>
 
         <!-- Personas Grid -->
         <div class="space-y-3">
           <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
-            <span>Available Experts</span>
+            <span>Available AI Experts</span>
             <span class="text-indigo-400 font-semibold lowercase">click to switch identity</span>
           </label>
 
@@ -345,7 +211,7 @@
 
         <!-- Topic Chips -->
         <div class="space-y-2.5 pt-2 border-t border-slate-800/80">
-          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filter Intelligence Stream</label>
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filter Stream</label>
           <div class="flex flex-wrap gap-2" id="topic-tags-container">
             <button onclick="filterByTopic('ALL')" class="topic-tag active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white text-slate-900 transition-all shadow-md">
               All Posts
@@ -362,7 +228,7 @@
           </div>
         </div>
 
-        <!-- Architecture Badges -->
+        <!-- System Stack Indicators -->
         <div class="grid grid-cols-3 gap-3 pt-4 border-t border-slate-800/80 text-center">
           <div class="p-3 bg-slate-900/50 rounded-2xl border border-slate-800">
             <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Memory Engine</div>
@@ -370,7 +236,7 @@
           </div>
           <div class="p-3 bg-slate-900/50 rounded-2xl border border-slate-800">
             <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">LLM Evaluator</div>
-            <div class="text-xs font-bold text-indigo-400 mt-0.5">Gemini 2.0 Flash</div>
+            <div class="text-xs font-bold text-indigo-400 mt-0.5">Gemini 1.5 Flash</div>
           </div>
           <div class="p-3 bg-slate-900/50 rounded-2xl border border-slate-800">
             <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Quality Threshold</div>
@@ -409,7 +275,7 @@
 
         <!-- Terminal Footer & Trigger Action -->
         <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
-          <span class="text-[10px] text-slate-400 font-mono">Click right to trigger AI cycle ➔</span>
+          <span class="text-[10px] text-slate-400 font-mono">Run live AI discovery ➔</span>
           
           <button id="force-cycle-btn" onclick="forceAutonomousCycle()" 
                   class="px-4 py-2 bg-white hover:bg-slate-100 text-slate-900 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-lg active:scale-95">
@@ -434,7 +300,7 @@
             <h2 class="text-base font-bold text-white tracking-tight font-outfit">Published Intelligence Stream</h2>
             <span id="post-count-badge" class="px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-extrabold text-xs">0</span>
           </div>
-          <p class="text-xs text-slate-400 mt-0.5">Posts generated autonomously over time by the AI persona without human prompts</p>
+          <p class="text-xs text-slate-400 mt-0.5">Posts created autonomously over time by the AI persona without human prompts</p>
         </div>
 
         <div class="flex items-center gap-2.5 w-full sm:w-auto">
@@ -498,7 +364,7 @@
             <span class="w-5 h-5 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px]">2</span>
             Deduplication & Editorial Judgment
           </h4>
-          <p class="text-slate-400">Before publishing, the system checks <strong>PostgreSQL Trigram Similarity</strong> and <strong>Breeth AI Cognitive Memory</strong> to prevent repeating topics. Next, <strong>Google Gemini (2.0 Flash)</strong> scores topic quality. Only topics scoring <strong>≥ 7.5 / 10</strong> are approved for publication!</p>
+          <p class="text-slate-400">Before publishing, the system checks <strong>PostgreSQL Trigram Similarity</strong> and <strong>Breeth AI Cognitive Memory</strong> to prevent repeating topics. Next, <strong>Google Gemini (1.5 Flash)</strong> scores topic quality. Only topics scoring <strong>≥ 7.5 / 10</strong> are approved for publication!</p>
         </div>
 
         <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
@@ -605,33 +471,35 @@
       posts: [],
     };
 
-    /* Seed Backup Posts Data */
-    const SEED_POSTS = [
-      {
-        id: "post-891",
-        createdAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
-        topicCategory: "Vulnerabilities",
-        text: "Automated vulnerability scanners are now detecting prompt injection attacks in LLM function-calling tools. As agent architectures gain write-access to internal database endpoints, enforcing strict schema validation on output parameters is no longer optional—it's critical core infrastructure.",
-        rationale: "Selected because tool-use vulnerabilities represent the largest emerging attack surface for enterprise LLM deployments. Prioritized over general benchmark releases.",
-        sources: ["https://arxiv.org/abs/2608.01942", "https://github.com/advisories"]
-      },
-      {
-        id: "post-892",
-        createdAt: new Date(Date.now() - 1000 * 60 * 48).toISOString(),
-        topicCategory: "Guardrails",
-        text: "Recent evaluations of open-source weights show an inflection point in localized threat modeling. Running compressed 8B parameter guardrail models directly inside edge proxies reduces latency from 180ms to under 12ms while retaining 94% policy accuracy.",
-        rationale: "Relevant today due to new quantization techniques enabling real-time inline safety checks on stream responses.",
-        sources: ["https://huggingface.co/blog"]
-      },
-      {
-        id: "post-893",
-        createdAt: new Date(Date.now() - 1000 * 60 * 160).toISOString(),
-        topicCategory: "Privacy",
-        text: "Differential privacy in synthetic dataset generation often suffers from stealth accuracy drops when fine-tuning multimodal agents. Balancing privacy epsilon values against downstream utility remains the primary hurdle for healthcare AI.",
-        rationale: "Chosen to address ongoing industry debates regarding synthetic data quality vs data governance compliance.",
-        sources: ["https://nature.com/articles"]
-      }
-    ];
+    /* Persona Seed Posts Map */
+    function getPersonaSeedPosts(name, domain, emoji) {
+      return [
+        {
+          id: `post-${Math.random().toString(36).substr(2, 6)}`,
+          createdAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+          topicCategory: "Vulnerabilities",
+          text: `[${name} — ${domain}] Automated vulnerability scanners are now detecting prompt injection attacks in LLM function-calling tools. As agent architectures gain write-access to internal database endpoints, enforcing strict schema validation on output parameters is no longer optional—it's critical core infrastructure.`,
+          rationale: `Selected by ${name} because tool-use vulnerabilities represent the largest emerging attack surface for enterprise LLM deployments. Prioritized over general benchmark releases.`,
+          sources: ["https://arxiv.org/abs/2608.01942", "https://github.com/advisories"]
+        },
+        {
+          id: `post-${Math.random().toString(36).substr(2, 6)}`,
+          createdAt: new Date(Date.now() - 1000 * 60 * 48).toISOString(),
+          topicCategory: "Guardrails",
+          text: `[${name} — ${domain}] Recent evaluations of open-source weights show an inflection point in localized threat modeling. Running compressed 8B parameter guardrail models directly inside edge proxies reduces latency from 180ms to under 12ms while retaining 94% policy accuracy.`,
+          rationale: `Selected by ${name} due to new quantization techniques enabling real-time inline safety checks on stream responses.`,
+          sources: ["https://huggingface.co/blog"]
+        },
+        {
+          id: `post-${Math.random().toString(36).substr(2, 6)}`,
+          createdAt: new Date(Date.now() - 1000 * 60 * 160).toISOString(),
+          topicCategory: "Privacy",
+          text: `[${name} — ${domain}] Differential privacy in synthetic dataset generation often suffers from stealth accuracy drops when fine-tuning multimodal agents. Balancing privacy epsilon values against downstream utility remains the primary hurdle for healthcare AI.`,
+          rationale: `Chosen by ${name} to address ongoing industry debates regarding synthetic data quality vs data governance compliance.`,
+          sources: ["https://nature.com/articles"]
+        }
+      ];
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
@@ -647,12 +515,6 @@
       }
 
       startTerminalStream();
-
-      // Check onboarding banner dismiss preference
-      if (localStorage.getItem('hide_onboarding_banner') === 'true') {
-        const banner = document.getElementById('onboarding-banner');
-        if (banner) banner.style.display = 'none';
-      }
 
       // Auto poll feed every 15s
       setInterval(() => {
@@ -670,14 +532,9 @@
       const badge = document.getElementById('nav-status-badge');
       const dot = document.getElementById('nav-status-dot');
       const text = document.getElementById('nav-status-text');
-      const latencyEl = document.getElementById('metric-latency');
 
-      const start = Date.now();
       try {
         const res = await fetch(`${getCleanBaseUrl()}/ping`);
-        const latency = Date.now() - start;
-        if (latencyEl) latencyEl.textContent = `${latency}ms`;
-
         if (res.ok) {
           badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
           dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400 status-pulse";
@@ -686,7 +543,6 @@
           throw new Error();
         }
       } catch (err) {
-        if (latencyEl) latencyEl.textContent = 'Offline';
         badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20";
         dot.className = "w-1.5 h-1.5 rounded-full bg-rose-500";
         text.textContent = "Server Offline";
@@ -721,12 +577,12 @@
           await fetchFeedFromAPI();
         } else {
           appendTerminalLog(`[API ERROR] ${data.error || 'Init failed'}`, 'text-rose-400');
-          STATE.posts = SEED_POSTS;
+          STATE.posts = getPersonaSeedPosts(name, domain, emoji);
           renderFeedList();
         }
       } catch (err) {
         appendTerminalLog(`[NETWORK ERROR] Could not connect to API: ${err.message}`, 'text-rose-400');
-        STATE.posts = SEED_POSTS;
+        STATE.posts = getPersonaSeedPosts(name, domain, emoji);
         renderFeedList();
       }
     }
@@ -740,18 +596,15 @@
           const data = await res.json();
           if (Array.isArray(data.posts) && data.posts.length > 0) {
             STATE.posts = data.posts;
-            renderFeedList();
-          } else if (STATE.posts.length === 0) {
-            STATE.posts = SEED_POSTS;
-            renderFeedList();
+          } else {
+            STATE.posts = getPersonaSeedPosts(STATE.personaName, STATE.personaDomain, STATE.personaEmoji);
           }
+          renderFeedList();
         }
       } catch (err) {
         console.warn('[Feed API Error]', err.message);
-        if (STATE.posts.length === 0) {
-          STATE.posts = SEED_POSTS;
-          renderFeedList();
-        }
+        STATE.posts = getPersonaSeedPosts(STATE.personaName, STATE.personaDomain, STATE.personaEmoji);
+        renderFeedList();
       }
     }
 
@@ -1012,12 +865,6 @@
       const modal = document.getElementById('guide-modal');
       modal.classList.add('opacity-0', 'pointer-events-none');
       modal.firstElementChild.classList.add('scale-95');
-    }
-
-    function dismissOnboarding() {
-      const banner = document.getElementById('onboarding-banner');
-      if (banner) banner.style.display = 'none';
-      localStorage.setItem('hide_onboarding_banner', 'true');
     }
 
     function openSettingsModal() {

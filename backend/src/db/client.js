@@ -1,5 +1,9 @@
 const { Pool } = require('pg');
 
+const rawHost = process.env.DB_HOST || 'localhost';
+const isDockerContainer = process.env.IS_DOCKER === 'true' || process.env.DOCKER_CONTAINER === 'true';
+const targetHost = (rawHost === 'postgres' && !isDockerContainer && !process.env.DATABASE_URL) ? 'localhost' : rawHost;
+
 const isLocal = !process.env.DATABASE_URL || 
   process.env.DATABASE_URL.includes('localhost') || 
   process.env.DATABASE_URL.includes('127.0.0.1');
@@ -13,7 +17,7 @@ const poolConfig = process.env.DATABASE_URL
     }
   : {
       user: process.env.DB_USER || 'aicreator',
-      host: process.env.DB_HOST || 'localhost',
+      host: targetHost,
       database: process.env.DB_NAME || 'aicreator_db',
       password: process.env.DB_PASSWORD || 'aicreator',
       port: parseInt(process.env.DB_PORT || '5432', 10),
@@ -28,7 +32,7 @@ pool.on('connect', () => {
 });
 
 pool.on('error', (err) => {
-  console.error('[DB Error] Unexpected error on idle client:', err);
+  console.error('[DB Error] Unexpected error on idle client:', err.message);
 });
 
 /**
@@ -44,7 +48,11 @@ async function query(text, params) {
     }
     return res;
   } catch (err) {
-    console.error(`[DB Error] Query failed: ${text}`, err);
+    if (err.code === 'ECONNREFUSED') {
+      console.error(`[DB Error] Could not connect to PostgreSQL at ${targetHost}:${poolConfig.port || 5432} (ECONNREFUSED). Please start Postgres (e.g. 'docker compose up postgres -d') or check your DATABASE_URL in .env.`);
+    } else {
+      console.error(`[DB Error] Query failed (${err.code || 'ERR'}):`, err.message || err);
+    }
     throw err;
   }
 }

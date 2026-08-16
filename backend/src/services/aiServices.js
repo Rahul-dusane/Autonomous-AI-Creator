@@ -1,8 +1,12 @@
 const https = require('https');
 
 // Primary and fallback models for high availability
-const PRIMARY_GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
-const FALLBACK_GEMINI_MODEL = 'gemini-1.5-flash';
+const GEMINI_MODELS = [
+  process.env.GEMINI_MODEL,
+  'gemini-2.0-flash',
+  'gemini-1.5-flash-latest',
+  'gemini-2.0-flash-exp',
+].filter(Boolean);
 
 /**
  * Helper to execute HTTP requests with custom timeouts and error handling
@@ -109,15 +113,12 @@ async function callOpenAI(systemPrompt, userPrompt) {
 /**
  * Call Gemini API if key available
  */
-async function callGemini(systemPrompt, userPrompt, retries = 2) {
+async function callGemini(systemPrompt, userPrompt) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error('GEMINI_API_KEY missing');
 
-  let attempt = 0;
-  let currentModel = PRIMARY_GEMINI_MODEL;
-
-  while (attempt < retries) {
-    attempt++;
+  let lastErr = null;
+  for (const currentModel of GEMINI_MODELS) {
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${currentModel}:generateContent?key=${apiKey}`;
 
     const payload = JSON.stringify({
@@ -145,13 +146,12 @@ async function callGemini(systemPrompt, userPrompt, retries = 2) {
       const rawText = parsedResponse?.candidates?.[0]?.content?.parts?.[0]?.text;
       return parseLLMJsonResponse(rawText);
     } catch (err) {
-      if (attempt === 1 && currentModel !== FALLBACK_GEMINI_MODEL) {
-        currentModel = FALLBACK_GEMINI_MODEL;
-      }
-      if (attempt >= retries) throw err;
-      await delay(1000);
+      lastErr = err;
+      console.warn(`[AIService] Gemini model ${currentModel} returned error: ${err.message}. Trying next fallback model...`);
     }
   }
+
+  throw lastErr || new Error('All Gemini model calls failed');
 }
 
 /**

@@ -13,5 +13,5 @@ RUN npm install --omit=dev
 # Copy all remaining source code from backend/
 COPY . .
 
-# Start your application
-CMD ["npm", "start"]
+# Start application directly without npm subshell wrapper
+CMD ["node", "src/server.js"]

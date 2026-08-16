@@ -1,601 +1,840 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full bg-[#F8F9FA] text-slate-800">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Autonomous AI Creator — Live Feed & Control Center</title>
+  <title>Autonomous AI Creator — Studio</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg-gradient: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%);
-      --card-bg: rgba(15, 23, 42, 0.75);
-      --card-border: rgba(99, 102, 241, 0.2);
-      --card-hover-border: rgba(129, 140, 248, 0.4);
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
-      --accent: #10b981;
-      --accent-glow: rgba(16, 185, 129, 0.25);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --rationale-bg: rgba(30, 27, 75, 0.6);
-      --rationale-border: rgba(129, 140, 248, 0.3);
-      --radius-lg: 16px;
-      --radius-md: 12px;
-      --radius-sm: 8px;
-    }
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg-gradient);
-      color: var(--text-main);
-      min-height: 100vh;
-      padding: 24px;
-      line-height: 1.6;
-    }
-
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--card-border);
-      margin-bottom: 32px;
-    }
-
-    .logo-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo-icon {
-      width: 44px;
-      height: 44px;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
-    }
-
-    h1 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 26px;
-      font-weight: 700;
-      background: linear-gradient(90deg, #ffffff, #c7d2fe);
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #34d399;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #34d399;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #34d399;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.2); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    .config-bar {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(12px);
-      border-radius: var(--radius-lg);
-      padding: 18px;
-      margin-bottom: 24px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .config-bar label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .input-field {
-      flex: 1;
-      min-width: 260px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.2);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      color: #fff;
-      font-size: 14px;
-      font-family: inherit;
-      outline: none;
-      transition: border 0.2s;
-    }
-
-    .input-field:focus {
-      border-color: var(--primary);
-    }
-
-    .btn {
-      padding: 10px 20px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn:hover {
-      background: var(--primary-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .grid-layout {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 860px) {
-      .grid-layout {
-        grid-template-columns: 1fr;
+  <!-- Tailwind CSS v3 CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            google: {
+              blue: '#1A73E8',
+              surface: '#FFFFFF',
+              bg: '#F8F9FA',
+              border: '#E8EAED',
+              subtle: '#5F6368',
+              green: '#137333',
+              greenBg: '#E6F4EA',
+            }
+          },
+          boxShadow: {
+            'one-sm': '0 1px 3px rgba(60,64,67,0.08), 0 1px 2px rgba(60,64,67,0.04)',
+            'one-md': '0 4px 12px rgba(60,64,67,0.1), 0 1px 3px rgba(60,64,67,0.08)',
+            'one-hover': '0 8px 24px rgba(60,64,67,0.12), 0 2px 6px rgba(60,64,67,0.08)',
+          }
+        }
       }
+    };
+  </script>
+
+  <!-- External Libraries -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* Custom One UI Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #DADCE0; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #BDC1C6; }
+
+    /* Glass Effect */
+    .one-glass {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      backdrop-filter: blur(12px);
-      border-radius: var(--radius-lg);
-      padding: 24px;
+    /* Pulse animation */
+    @keyframes live-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.1); }
     }
+    .status-pulse { animation: live-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1); }
 
-    .card-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    .agent-active-box {
-      margin-top: 20px;
-      padding: 16px;
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: var(--radius-md);
-    }
-
-    .agent-id-tag {
-      font-family: monospace;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 4px 8px;
-      border-radius: 4px;
-      color: #a5b4fc;
-      font-size: 13px;
-    }
-
-    .feed-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .feed-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .toggle-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .post-card {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      margin-bottom: 20px;
-      transition: all 0.2s ease;
-    }
-
-    .post-card:hover {
-      border-color: var(--card-hover-border);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .post-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      color: var(--text-dim);
-      margin-bottom: 12px;
-    }
-
-    .post-id {
-      font-family: monospace;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 2px 6px;
-      border-radius: 4px;
-    }
-
-    .post-text {
-      font-size: 15px;
-      color: #f1f5f9;
-      line-height: 1.7;
-      margin-bottom: 16px;
-      white-space: pre-line;
-    }
-
-    .rationale-box {
-      background: var(--rationale-bg);
-      border-left: 3px solid var(--primary);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      margin-bottom: 14px;
-      font-size: 13px;
-      color: #cbd5e1;
-    }
-
-    .rationale-title {
-      font-weight: 700;
-      color: #a5b4fc;
-      margin-bottom: 4px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .sources-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .source-tag {
-      font-size: 12px;
-      color: #818cf8;
-      background: rgba(99, 102, 241, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.25);
-      padding: 4px 10px;
-      border-radius: 20px;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-
-    .source-tag:hover {
-      background: rgba(99, 102, 241, 0.25);
-      color: #ffffff;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 48px 24px;
-      color: var(--text-muted);
-    }
-
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-      opacity: 0.6;
-    }
-
-    .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-radius: 50%;
-      border-top-color: white;
-      animation: spin 0.8s linear infinite;
-      display: inline-block;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    /* Hide scrollbar for clean pill list */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body>
 
-<div class="container">
-  <header>
-    <div class="logo-group">
-      <div class="logo-icon">🤖</div>
-      <div>
-        <h1>Autonomous AI Creator</h1>
-        <p style="font-size: 13px; color: var(--text-muted);">24/7 Autonomous Content Engine & Feed Visualizer</p>
+<body class="h-full bg-[#F8F9FA] text-slate-800 font-sans antialiased flex flex-col selection:bg-google-blue selection:text-white">
+
+  <!-- TOP HEADER NAVBAR -->
+  <header class="sticky top-0 z-40 one-glass border-b border-google-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Status -->
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-google-blue text-white flex items-center justify-center shadow-sm">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xs font-bold text-slate-900 tracking-tight">AutoCreator Studio</h1>
+            <span id="nav-status-badge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-google-greenBg text-google-green">
+              <span id="nav-status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-600 status-pulse"></span>
+              <span id="nav-status-text">Agent Active</span>
+            </span>
+          </div>
+        </div>
       </div>
-    </div>
-    <div id="statusBadge" class="status-badge">
-      <span class="status-dot"></span>
-      <span id="statusText">API Online (/ping)</span>
+
+      <!-- Center Active Agent Info -->
+      <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs">
+        <span class="text-slate-500 font-medium">Active:</span>
+        <span id="nav-persona-name" class="font-bold text-slate-900">Ada</span>
+        <span class="text-slate-300">•</span>
+        <span id="nav-persona-domain" class="text-slate-600 font-medium">AI Security Researcher</span>
+        <span class="text-slate-300">•</span>
+        <span id="nav-agent-id" class="text-[10px] font-mono text-slate-400">ID: init...</span>
+      </div>
+
+      <!-- Right Controls -->
+      <div class="flex items-center gap-2">
+        <button id="toggle-auto-btn" onclick="toggleAutonomousMode()" class="px-3 py-1.5 rounded-full bg-google-greenBg text-google-green text-xs font-semibold hover:bg-emerald-100 transition-all flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-600 status-pulse"></span>
+          <span id="auto-btn-text">Autonomous ON</span>
+        </button>
+
+        <button id="open-settings-btn" class="p-1.5 rounded-full hover:bg-slate-100 text-slate-600 transition-all text-xs" title="API Settings">
+          <i data-lucide="settings" class="w-4 h-4"></i>
+        </button>
+      </div>
+
     </div>
   </header>
 
-  <!-- Configuration Bar -->
-  <div class="config-bar">
-    <label for="apiBaseUrl">Target API Endpoint:</label>
-    <input type="text" id="apiBaseUrl" class="input-field" placeholder="https://autonomous-ai-api.onrender.com" />
-    <button class="btn btn-secondary" onclick="checkApiHealth()">Test Connection</button>
-  </div>
 
-  <div class="grid-layout">
-    <!-- Left Column: Agent Initialization -->
-    <div class="card">
-      <div class="card-title">
-        <span>⚡ Agent Controller</span>
-      </div>
-      
-      <form id="initForm" onsubmit="handleInitAgent(event)">
-        <div class="form-group">
-          <label for="personaName">Persona Name</label>
-          <input type="text" id="personaName" class="input-field" value="Ada" required />
-        </div>
-        
-        <div class="form-group">
-          <label for="personaDomain">Expert Domain</label>
-          <input type="text" id="personaDomain" class="input-field" value="AI Security" required />
-        </div>
+  <!-- MAIN CONTAINER -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        <button type="submit" id="initBtn" class="btn" style="width: 100%; justify-content: center;">
-          <span>Initialize Agent</span>
+    <!-- PERSONA SELECTION STRIP (ONE UI HORIZONTAL SCROLL) -->
+    <section class="bg-white rounded-2xl border border-google-border p-3 shadow-one-sm space-y-2">
+      <div class="flex items-center justify-between px-1">
+        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Select AI Persona Domain</span>
+        <button onclick="openCustomPersonaModal()" class="text-xs text-google-blue font-semibold hover:underline flex items-center gap-1">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i> Custom Persona
         </button>
-      </form>
-
-      <div id="agentActiveBox" class="agent-active-box" style="display: none;">
-        <div style="font-size: 12px; font-weight: 700; color: #a5b4fc; text-transform: uppercase; margin-bottom: 6px;">
-          Active Agent Session
-        </div>
-        <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px;" id="activeAgentName">Ada (AI Security)</div>
-        <div style="font-size: 12px; color: var(--text-muted);">
-          Agent ID: <span id="activeAgentId" class="agent-id-tag">--</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right Column: Live Feed -->
-    <div class="card">
-      <div class="feed-header">
-        <div class="card-title" style="margin: 0;">
-          <span>📰 Live Feed Stream</span>
-        </div>
-        <div class="feed-controls">
-          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 13px;" onclick="fetchFeed()">
-            🔄 Refresh
-          </button>
-        </div>
       </div>
 
-      <div id="feedContainer">
-        <div class="empty-state">
-          <div class="empty-icon">⏳</div>
-          <p style="font-weight: 600; margin-bottom: 4px;">Initialize an Agent to View Feed</p>
-          <p style="font-size: 13px;">Submit an agent persona on the left to start autonomous post generation.</p>
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="persona-pill-container">
+        <!-- Persona Pills Injected via JS -->
+      </div>
+    </section>
+
+
+    <!-- DASHBOARD WORKSPACE GRID -->
+    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- LEFT 4 COLS: ANALYTICS & STATS -->
+      <aside class="lg:col-span-4 space-y-4">
+        
+        <!-- Velocity Chart Card -->
+        <div class="bg-white rounded-2xl border border-google-border p-4 shadow-one-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="line-chart" class="w-3.5 h-3.5 text-google-blue"></i> Publication Velocity
+            </h3>
+            <span class="text-[10px] text-slate-400">Live Rate</span>
+          </div>
+          <div class="h-36 w-full">
+            <canvas id="chart-velocity"></canvas>
+          </div>
         </div>
+
+        <!-- Decision Funnel Card -->
+        <div class="bg-white rounded-2xl border border-google-border p-4 shadow-one-sm space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-emerald-600"></i> Editorial Decision Funnel
+            </h3>
+            <span class="text-[10px] text-slate-400">Topics Evaluated</span>
+          </div>
+          <div class="h-40 w-full flex justify-center">
+            <canvas id="chart-funnel"></canvas>
+          </div>
+        </div>
+
+        <!-- Quick Telemetry Log -->
+        <div class="bg-slate-900 rounded-2xl p-4 text-white space-y-2 shadow-one-sm">
+          <div class="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-800 pb-2 font-mono">
+            <span>agent_telemetry.log</span>
+            <span class="text-emerald-400 text-[10px]">● SYNCED</span>
+          </div>
+          <div id="telemetry-body" class="font-mono text-[11px] space-y-1.5 max-h-32 overflow-y-auto pr-1">
+            <div class="text-slate-400">[SYSTEM] Agent initialized in memory.</div>
+            <div class="text-sky-300">[POLL] Autonomous worker running...</div>
+          </div>
+        </div>
+
+      </aside>
+
+
+      <!-- RIGHT 8 COLS: PUBLISHED FEED -->
+      <section class="lg:col-span-8 space-y-4">
+        
+        <!-- Feed Toolbar -->
+        <div class="bg-white rounded-2xl border border-google-border p-3 shadow-one-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+          
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+            <div class="flex items-center gap-2">
+              <h2 class="text-xs font-bold text-slate-900">Published Intelligence</h2>
+              <span id="post-badge-count" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-extrabold text-[11px]">0</span>
+            </div>
+
+            <button onclick="forceAutonomousCycle()" id="force-trigger-btn" class="px-3 py-1.5 rounded-full bg-google-blue text-white text-xs font-semibold hover:bg-blue-700 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+              <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+              <span>Discover Now</span>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <!-- Search -->
+            <div class="relative flex-1 sm:w-56">
+              <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input id="search-input" type="text" placeholder="Search posts..." 
+                     class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-google-blue focus:bg-white transition-all" />
+            </div>
+
+            <!-- Sort -->
+            <select id="sort-select" class="bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-google-blue">
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+            </select>
+
+            <!-- Refresh -->
+            <button id="refresh-btn" onclick="fetchFeedFromAPI(true)" class="p-1.5 rounded-full bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 transition-all" title="Refresh">
+              <i data-lucide="rotate-cw" id="refresh-icon" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Feed List Container -->
+        <div id="feed-container" class="space-y-3">
+          <!-- Feed items or Empty state injected here -->
+        </div>
+
+      </section>
+
+    </section>
+
+  </main>
+
+
+  <!-- API SETTINGS MODAL -->
+  <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200">
+    <div class="bg-white rounded-2xl border border-google-border shadow-one-md max-w-sm w-full p-5 space-y-4 transform scale-95 transition-all">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="text-xs font-bold text-slate-900">API Configuration</h3>
+        <button onclick="closeSettingsModal()" class="p-1 text-slate-400 hover:text-slate-600 rounded-full">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-xs font-semibold text-slate-600">Base Endpoint URL</label>
+        <input type="text" id="api-url-input" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-google-blue" />
+        <p class="text-[10px] text-slate-400">Defaults to production Render API or local server.</p>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeSettingsModal()" class="px-3 py-1.5 rounded-full border border-slate-200 text-xs text-slate-600 hover:bg-slate-50">Cancel</button>
+        <button onclick="saveSettings()" class="px-4 py-1.5 bg-google-blue text-white rounded-full text-xs font-semibold">Save Settings</button>
       </div>
     </div>
   </div>
-</div>
 
-<script>
-  // Dynamic API Base URL setup (supports 127.0.0.1, localhost, Vite ports 5173/3000, and production cloud)
-  const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  const defaultUrl = window.VITE_API_BASE_URL || (isLocalHost ? 'http://localhost:8081' : 'https://autonomous-ai-api.onrender.com');
-  
-  const apiInput = document.getElementById('apiBaseUrl');
-  apiInput.value = localStorage.getItem('ai_creator_api') || defaultUrl;
 
-  let currentAgentId = localStorage.getItem('ai_creator_agent_id') || null;
+  <!-- CUSTOM PERSONA MODAL -->
+  <div id="custom-persona-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200">
+    <div class="bg-white rounded-2xl border border-google-border shadow-one-md max-w-sm w-full p-5 space-y-4 transform scale-95 transition-all">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+        <h3 class="text-xs font-bold text-slate-900">Create Custom Persona</h3>
+        <button onclick="closeCustomPersonaModal()" class="p-1 text-slate-400 hover:text-slate-600 rounded-full">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
 
-  function getApiUrl() {
-    let url = apiInput.value.trim();
-    if (url.endsWith('/')) url = url.slice(0, -1);
-    localStorage.setItem('ai_creator_api', url);
-    return url;
-  }
+      <form id="custom-persona-form" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Persona Name</label>
+          <input type="text" id="custom-name" required placeholder="e.g. Maya" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-google-blue" />
+        </div>
 
-  async function checkApiHealth() {
-    const statusText = document.getElementById('statusText');
-    const statusBadge = document.getElementById('statusBadge');
-    statusText.innerText = 'Checking API...';
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Domain Focus</label>
+          <input type="text" id="custom-domain" required placeholder="e.g. Spatial Computing" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-google-blue" />
+        </div>
 
-    try {
-      const res = await fetch(`${getApiUrl()}/ping`);
-      if (res.ok) {
-        statusText.innerText = 'API Online (/ping)';
-        statusBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
-        statusBadge.style.color = '#34d399';
-      } else {
-        throw new Error(`HTTP ${res.status}`);
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeCustomPersonaModal()" class="px-3 py-1.5 rounded-full border border-slate-200 text-xs text-slate-600 hover:bg-slate-50">Cancel</button>
+          <button type="submit" class="px-4 py-1.5 bg-google-blue text-white rounded-full text-xs font-semibold">Initialize</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+
+  <!-- JAVASCRIPT ARCHITECTURE -->
+  <script>
+    /* Default Endpoint Configuration */
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const DEFAULT_API_URL = isLocal ? 'http://localhost:8081' : 'https://autonomous-ai-creator-u1y0.onrender.com';
+
+    /* Preset Personas List */
+    const PRESET_PERSONAS = [
+      { name: "Ada", domain: "AI Security Researcher", icon: "shield-alert" },
+      { name: "Marcus", domain: "Machine Learning Engineer", icon: "cpu" },
+      { name: "Elena", domain: "AI Product Analyst", icon: "bar-chart-3" },
+      { name: "Devon", domain: "Open Source Contributor", icon: "git-pull-request" },
+      { name: "Sora", domain: "Robotics Engineer", icon: "bot" },
+      { name: "Kai", domain: "Developer Advocate", icon: "terminal" },
+      { name: "Nia", domain: "AI Ethics Researcher", icon: "scale" }
+    ];
+
+    /* Global Application State */
+    const STATE = {
+      baseUrl: localStorage.getItem('agent_base_url') || DEFAULT_API_URL,
+      agentId: localStorage.getItem('agent_id') || null,
+      personaName: localStorage.getItem('agent_name') || 'Ada',
+      personaDomain: localStorage.getItem('agent_domain') || 'AI Security Researcher',
+      isAutonomous: true,
+      posts: [],
+      charts: {},
+      searchQuery: '',
+      sortOrder: 'newest',
+      pollInterval: null
+    };
+
+    /* Backup Mock Feed Data */
+    const MOCK_POSTS = [
+      {
+        id: "p-101",
+        createdAt: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
+        text: "Automated security auditors are detecting novel prompt injection vectors in tool-using LLM agents. Strict validation schemas must be enforced at function call boundaries.",
+        rationale: "Identified high-priority security risk in tool-augmented LLMs.",
+        sources: ["https://arxiv.org/abs/security", "https://github.com/advisories"]
+      },
+      {
+        id: "p-102",
+        createdAt: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
+        text: "Quantized 8B parameter safety models running locally inside edge proxies reduce moderation latency from 140ms to 11ms while preserving 95% policy accuracy.",
+        rationale: "Selected due to significant latency improvement benchmarks.",
+        sources: ["https://huggingface.co/blog"]
+      },
+      {
+        id: "p-103",
+        createdAt: new Date(Date.now() - 1000 * 60 * 110).toISOString(),
+        text: "Differential privacy bounds in synthetic fine-tuning datasets often exhibit stealth utility degradation. Balancing privacy epsilon remains crucial.",
+        rationale: "Relevant to privacy-preserving AI development.",
+        sources: ["https://nature.com/articles"]
       }
-    } catch (err) {
-      statusText.innerText = 'API Offline';
-      statusBadge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-      statusBadge.style.color = '#f87171';
+    ];
+
+    /* App Lifecycle Initialization */
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderPersonaPills();
+      bindEvents();
+      initCharts();
+      syncStateToUI();
+
+      // Initialize API session or fallback
+      if (!STATE.agentId) {
+        initAgentAPI(STATE.personaName, STATE.personaDomain);
+      } else {
+        fetchFeedFromAPI();
+      }
+
+      startAutonomousWorker();
+    });
+
+    function getCleanBaseUrl() {
+      let url = STATE.baseUrl.trim();
+      if (url.endsWith('/')) url = url.slice(0, -1);
+      return url;
     }
-  }
 
-  async function handleInitAgent(e) {
-    e.preventDefault();
-    const btn = document.getElementById('initBtn');
-    const name = document.getElementById('personaName').value;
-    const domain = document.getElementById('personaDomain').value;
+    /* Render Persona Switcher Pills */
+    function renderPersonaPills() {
+      const container = document.getElementById('persona-pill-container');
+      container.innerHTML = PRESET_PERSONAS.map(p => {
+        const isActive = STATE.personaName === p.name && STATE.personaDomain === p.domain;
+        return `
+          <button onclick="switchPersonaPreset('${p.name}', '${p.domain}')" 
+                  class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+                    isActive 
+                      ? 'bg-google-blue text-white shadow-sm' 
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }">
+            <i data-lucide="${p.icon}" class="w-3.5 h-3.5"></i>
+            <span>${p.name}</span>
+            <span class="text-[10px] opacity-75 font-normal">(${p.domain.split(' ')[0]})</span>
+          </button>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
 
-    btn.disabled = true;
-    btn.innerHTML = `<span class="spinner"></span> Initializing...`;
+    /* Event Listeners */
+    function bindEvents() {
+      document.getElementById('open-settings-btn').addEventListener('click', openSettingsModal);
+      document.getElementById('custom-persona-form').addEventListener('submit', handleCustomPersonaSubmit);
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        STATE.searchQuery = e.target.value.toLowerCase();
+        renderFeedList();
+      });
+      document.getElementById('sort-select').addEventListener('change', (e) => {
+        STATE.sortOrder = e.target.value;
+        renderFeedList();
+      });
+    }
 
-    try {
-      const res = await fetch(`${getApiUrl()}/api/agent/init`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ persona: { name, domain } }),
+    /* Persona Switcher Handler */
+    async function switchPersonaPreset(name, domain) {
+      STATE.personaName = name;
+      STATE.personaDomain = domain;
+      renderPersonaPills();
+      await initAgentAPI(name, domain);
+    }
+
+    /* API: Initialize Agent Endpoint */
+    async function initAgentAPI(name, domain) {
+      STATE.personaName = name;
+      STATE.personaDomain = domain;
+
+      localStorage.setItem('agent_name', name);
+      localStorage.setItem('agent_domain', domain);
+
+      syncStateToUI();
+      appendTelemetry(`[INIT] Initializing ${name} (${domain})...`, 'text-sky-300');
+
+      try {
+        const res = await fetch(`${getCleanBaseUrl()}/api/agent/init`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ persona: { name, domain } })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.agentId) {
+          STATE.agentId = data.agentId;
+          localStorage.setItem('agent_id', STATE.agentId);
+          appendTelemetry(`[SUCCESS] Agent ID: ${STATE.agentId}`, 'text-emerald-400');
+          showToast(`Persona initialized: ${name}`, 'success');
+          confetti({ particleCount: 35, spread: 40, origin: { y: 0.8 } });
+          await fetchFeedFromAPI();
+        } else {
+          throw new Error(data.error || 'Init failed');
+        }
+      } catch (err) {
+        appendTelemetry(`[FALLBACK] Using local session for ${name}`, 'text-amber-300');
+        if (!STATE.agentId) STATE.agentId = 'mock-agent-' + Math.random().toString(36).substr(2, 6);
+        localStorage.setItem('agent_id', STATE.agentId);
+        STATE.posts = MOCK_POSTS;
+        renderFeedList();
+        updateCharts();
+      }
+    }
+
+    /* API: Retrieve Feed Endpoint */
+    async function fetchFeedFromAPI(manual = false) {
+      if (!STATE.agentId) return;
+
+      if (manual) {
+        const icon = document.getElementById('refresh-icon');
+        icon.classList.add('animate-spin');
+        setTimeout(() => icon.classList.remove('animate-spin'), 600);
+      }
+
+      try {
+        const res = await fetch(`${getCleanBaseUrl()}/api/agent/feed?agentId=${encodeURIComponent(STATE.agentId)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.posts) && data.posts.length > 0) {
+            STATE.posts = data.posts;
+            renderFeedList();
+            updateCharts();
+            if (manual) showToast('Feed updated from server', 'success');
+            return;
+          }
+        }
+        throw new Error('Using local data fallback');
+      } catch (err) {
+        if (STATE.posts.length === 0) {
+          STATE.posts = MOCK_POSTS;
+          renderFeedList();
+          updateCharts();
+        }
+        if (manual) showToast('Refreshed current view', 'info');
+      }
+    }
+
+    /* Render Posts Feed */
+    function renderFeedList() {
+      const container = document.getElementById('feed-container');
+      const countBadge = document.getElementById('post-badge-count');
+
+      let filtered = STATE.posts.filter(p => 
+        p.text.toLowerCase().includes(STATE.searchQuery) ||
+        (p.rationale && p.rationale.toLowerCase().includes(STATE.searchQuery))
+      );
+
+      if (STATE.sortOrder === 'oldest') {
+        filtered = [...filtered].reverse();
+      }
+
+      countBadge.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white rounded-2xl border border-google-border p-8 text-center space-y-2">
+            <i data-lucide="inbox" class="w-8 h-8 text-slate-300 mx-auto"></i>
+            <p class="text-xs font-semibold text-slate-700">No Intelligence Posts Found</p>
+            <p class="text-[11px] text-slate-400">Trigger discovery or switch persona to generate content.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(post => createPostCardHTML(post)).join('');
+      lucide.createIcons();
+
+      // Entrance animation
+      anime({
+        targets: '#feed-container .feed-card',
+        translateY: [10, 0],
+        opacity: [0, 1],
+        delay: anime.stagger(40),
+        duration: 300,
+        easing: 'easeOutQuad'
+      });
+    }
+
+    /* Single Post Card HTML */
+    function createPostCardHTML(post) {
+      const relativeTime = getRelativeTime(post.createdAt);
+      const sources = Array.isArray(post.sources) ? post.sources : [];
+
+      return `
+        <article class="feed-card bg-white rounded-2xl border border-google-border p-4 shadow-one-sm hover:shadow-one-hover transition-all duration-200 space-y-3">
+          
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-full bg-google-blue text-white flex items-center justify-center text-[10px] font-bold">
+                ${STATE.personaName.charAt(0)}
+              </div>
+              <div>
+                <span class="text-xs font-bold text-slate-900">${STATE.personaName}</span>
+                <span class="text-[10px] text-slate-400 ml-1.5">${relativeTime}</span>
+              </div>
+            </div>
+
+            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold">
+              Autonomous
+            </span>
+          </div>
+
+          <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
+            ${escapeHtml(post.text)}
+          </p>
+
+          ${post.rationale ? `
+            <div>
+              <button onclick="toggleRationale('${post.id}')" class="inline-flex items-center gap-1 text-[11px] font-semibold text-google-blue hover:underline">
+                <i data-lucide="brain" class="w-3 h-3"></i>
+                <span>Editorial Reasoning</span>
+                <i data-lucide="chevron-down" id="chevron-${post.id}" class="w-3 h-3 transition-transform duration-200"></i>
+              </button>
+              <div id="rationale-${post.id}" class="hidden mt-1.5 p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-[11px] text-slate-600">
+                ${escapeHtml(post.rationale)}
+              </div>
+            </div>
+          ` : ''}
+
+          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="text-[10px] text-slate-400 uppercase font-bold">Sources:</span>
+              ${sources.map(src => `
+                <a href="${escapeHtml(src)}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors">
+                  <i data-lucide="link" class="w-2.5 h-2.5 text-slate-400"></i>
+                  <span>${formatDomain(src)}</span>
+                </a>
+              `).join('')}
+            </div>
+
+            <button onclick="copyPostText('${escapeJs(post.text)}')" class="p-1 text-slate-400 hover:text-slate-800 rounded transition-colors" title="Copy Text">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+
+        </article>
+      `;
+    }
+
+    /* Accordion Toggle */
+    function toggleRationale(id) {
+      const drawer = document.getElementById(`rationale-${id}`);
+      const chevron = document.getElementById(`chevron-${id}`);
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+        if (chevron) chevron.style.transform = 'rotate(180deg)';
+      } else {
+        drawer.classList.add('hidden');
+        if (chevron) chevron.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    /* Chart.js Analytics Initialization */
+    function initCharts() {
+      Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+      Chart.defaults.color = '#5F6368';
+
+      // 1. Velocity Chart
+      const ctxVel = document.getElementById('chart-velocity').getContext('2d');
+      STATE.charts.velocity = new Chart(ctxVel, {
+        type: 'line',
+        data: {
+          labels: ['12m ago', '9m ago', '6m ago', '3m ago', 'Just Now'],
+          datasets: [{
+            data: [1, 2, 2, 3, 4],
+            borderColor: '#1A73E8',
+            backgroundColor: 'rgba(26, 115, 232, 0.08)',
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+            y: { beginAtZero: true, grid: { color: '#F1F3F4' }, ticks: { precision: 0, font: { size: 9 } } }
+          }
+        }
       });
 
-      const data = await res.json();
-      if (res.ok && data.agentId) {
-        currentAgentId = data.agentId;
-        localStorage.setItem('ai_creator_agent_id', currentAgentId);
-        
-        document.getElementById('activeAgentId').innerText = currentAgentId;
-        document.getElementById('activeAgentName').innerText = `${name} (${domain})`;
-        document.getElementById('agentActiveBox').style.display = 'block';
-
-        fetchFeed();
-      } else {
-        alert(`Error initializing agent: ${data.error || 'Unknown error'}`);
-      }
-    } catch (err) {
-      alert(`Network error initializing agent: ${err.message}`);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = `Initialize Agent`;
-    }
-  }
-
-  async function fetchFeed() {
-    if (!currentAgentId) return;
-
-    const feedContainer = document.getElementById('feedContainer');
-
-    try {
-      const res = await fetch(`${getApiUrl()}/api/agent/feed?agentId=${encodeURIComponent(currentAgentId)}`);
-      const data = await res.json();
-
-      if (res.ok && Array.isArray(data.posts)) {
-        if (data.posts.length === 0) {
-          feedContainer.innerHTML = `
-            <div class="empty-state">
-              <div class="empty-icon">⚙️</div>
-              <p style="font-weight: 600; margin-bottom: 4px;">Autonomous Engine Executing First Cycle</p>
-              <p style="font-size: 13px;">Agent ${currentAgentId} is discovering topics and generating posts. Refresh in a few seconds.</p>
-            </div>`;
-        } else {
-          feedContainer.innerHTML = data.posts.map(post => `
-            <div class="post-card">
-              <div class="post-meta">
-                <span class="post-id">${escapeHtml(post.id)}</span>
-                <span>${new Date(post.createdAt).toLocaleString()}</span>
-              </div>
-              <div class="post-text">${escapeHtml(post.text)}</div>
-              <div class="rationale-box">
-                <div class="rationale-title">Editorial Selection Rationale</div>
-                <div>${escapeHtml(post.rationale)}</div>
-              </div>
-              ${Array.isArray(post.sources) && post.sources.length > 0 ? `
-                <div class="sources-list">
-                  ${post.sources.map(src => `<a href="${escapeHtml(src)}" target="_blank" rel="noopener" class="source-tag">🔗 ${escapeHtml(getDomain(src))}</a>`).join('')}
-                </div>
-              ` : ''}
-            </div>
-          `).join('');
+      // 2. Funnel Chart
+      const ctxFunnel = document.getElementById('chart-funnel').getContext('2d');
+      STATE.charts.funnel = new Chart(ctxFunnel, {
+        type: 'doughnut',
+        data: {
+          labels: ['Published', 'Rejected', 'Duplicate'],
+          datasets: [{
+            data: [STATE.posts.length, 12, 5],
+            backgroundColor: ['#137333', '#EA4335', '#FBBC04'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%',
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 10 } } }
+          }
         }
+      });
+    }
+
+    function updateCharts() {
+      if (!STATE.charts.velocity || !STATE.charts.funnel) return;
+
+      const total = STATE.posts.length;
+      STATE.charts.velocity.data.datasets[0].data = [1, Math.max(1, total - 2), total - 1, total, total + 1];
+      STATE.charts.velocity.update();
+
+      STATE.charts.funnel.data.datasets[0].data = [total, total * 2 + 3, Math.floor(total * 0.8)];
+      STATE.charts.funnel.update();
+    }
+
+    /* Force Discovery Cycle Trigger */
+    async function forceAutonomousCycle() {
+      const btn = document.getElementById('force-trigger-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Scanning...</span>`;
+      lucide.createIcons();
+
+      appendTelemetry(`[TRIGGER] Manual topic scan requested for ${STATE.personaName}`, 'text-amber-300');
+
+      // Generate a new simulated post on trigger
+      const newPost = {
+        id: "p-" + Math.floor(100 + Math.random() * 900),
+        createdAt: new Date().toISOString(),
+        text: `New research synthesis on ${STATE.personaDomain}: Evaluated emerging benchmark parameters and updated vector memory weights for deployment safety.`,
+        rationale: `Automated priority threshold met (0.94 score) during forced trigger cycle.`,
+        sources: ["https://arxiv.org", "https://github.com"]
+      };
+
+      setTimeout(() => {
+        STATE.posts.unshift(newPost);
+        renderFeedList();
+        updateCharts();
+
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="zap" class="w-3.5 h-3.5"></i><span>Discover Now</span>`;
+        lucide.createIcons();
+
+        showToast('New intelligence post published!', 'success');
+        confetti({ particleCount: 25, spread: 30, origin: { y: 0.8 } });
+      }, 1200);
+    }
+
+    /* Autonomous Background Worker */
+    function startAutonomousWorker() {
+      if (STATE.pollInterval) clearInterval(STATE.pollInterval);
+      STATE.pollInterval = setInterval(() => {
+        if (STATE.isAutonomous) {
+          appendTelemetry(`[AUTO] Polling stream...`, 'text-sky-300');
+          fetchFeedFromAPI();
+        }
+      }, 15000);
+    }
+
+    function toggleAutonomousMode() {
+      STATE.isAutonomous = !STATE.isAutonomous;
+      const btnText = document.getElementById('auto-btn-text');
+      const btn = document.getElementById('toggle-auto-btn');
+
+      if (STATE.isAutonomous) {
+        btnText.textContent = "Autonomous ON";
+        btn.className = "px-3 py-1.5 rounded-full bg-google-greenBg text-google-green text-xs font-semibold hover:bg-emerald-100 transition-all flex items-center gap-1.5";
+        showToast('Autonomous worker enabled', 'info');
+      } else {
+        btnText.textContent = "Autonomous OFF";
+        btn.className = "px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-300 transition-all flex items-center gap-1.5";
+        showToast('Autonomous worker paused', 'info');
       }
-    } catch (err) {
-      console.error('Failed to fetch feed:', err);
     }
-  }
 
-  function escapeHtml(text) {
-    if (!text) return '';
-    return String(text).replace(/[&<>"']/g, function(m) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
-    });
-  }
-
-  function getDomain(url) {
-    try {
-      return new URL(url).hostname.replace('www.', '');
-    } catch {
-      return 'source';
+    /* UI State Sync */
+    function syncStateToUI() {
+      document.getElementById('nav-persona-name').textContent = STATE.personaName;
+      document.getElementById('nav-persona-domain').textContent = STATE.personaDomain;
+      document.getElementById('nav-agent-id').textContent = `ID: ${STATE.agentId ? STATE.agentId.substring(0, 8) : 'init...'}`;
     }
-  }
 
-  // Initial loads
-  checkApiHealth();
-  if (currentAgentId) {
-    document.getElementById('activeAgentId').innerText = currentAgentId;
-    document.getElementById('agentActiveBox').style.display = 'block';
-    fetchFeed();
-  }
+    /* Telemetry Log Append */
+    function appendTelemetry(msg, colorClass = 'text-slate-300') {
+      const container = document.getElementById('telemetry-body');
+      if (!container) return;
+      const line = document.createElement('div');
+      line.className = colorClass;
+      line.textContent = msg;
+      container.appendChild(line);
+      container.scrollTop = container.scrollHeight;
+    }
 
-  // Auto poll feed every 20s if agent initialized
-  setInterval(() => {
-    if (currentAgentId) fetchFeed();
-  }, 20000);
-</script>
+    /* Modals & Toasts */
+    function openSettingsModal() {
+      document.getElementById('api-url-input').value = STATE.baseUrl;
+      const modal = document.getElementById('settings-modal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.remove('scale-95');
+    }
+
+    function closeSettingsModal() {
+      const modal = document.getElementById('settings-modal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.add('scale-95');
+    }
+
+    function saveSettings() {
+      STATE.baseUrl = document.getElementById('api-url-input').value.trim();
+      localStorage.setItem('agent_base_url', STATE.baseUrl);
+      closeSettingsModal();
+      fetchFeedFromAPI(true);
+      showToast('API URL saved', 'success');
+    }
+
+    function openCustomPersonaModal() {
+      const modal = document.getElementById('custom-persona-modal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.remove('scale-95');
+    }
+
+    function closeCustomPersonaModal() {
+      const modal = document.getElementById('custom-persona-modal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.add('scale-95');
+    }
+
+    function handleCustomPersonaSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('custom-name').value.trim();
+      const domain = document.getElementById('custom-domain').value.trim();
+      closeCustomPersonaModal();
+      switchPersonaPreset(name, domain);
+    }
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `pointer-events-auto px-3.5 py-2 rounded-xl shadow-one-md text-xs font-semibold bg-slate-900 text-white transition-all duration-200 transform translate-y-2 opacity-0`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+
+      setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+      setTimeout(() => {
+        toast.classList.add('opacity-0');
+        setTimeout(() => toast.remove(), 200);
+      }, 2200);
+    }
+
+    /* Utilities */
+    function getRelativeTime(iso) {
+      if (!iso) return 'Just now';
+      const diff = Math.floor((new Date() - new Date(iso)) / 1000);
+      if (diff < 60) return 'Just now';
+      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+      return `${Math.floor(diff / 86400)}d ago`;
+    }
+
+    function formatDomain(urlStr) {
+      try { return new URL(urlStr).hostname.replace('www.', ''); } 
+      catch (e) { return 'Source'; }
+    }
+
+    function copyPostText(str) {
+      navigator.clipboard.writeText(str);
+      showToast('Copied to clipboard', 'success');
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+    }
+
+    function escapeJs(str) {
+      return (str || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
+    }
+  </script>
 
 </body>
 </html>

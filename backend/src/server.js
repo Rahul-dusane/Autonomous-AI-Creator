@@ -8,17 +8,33 @@ const { startAutonomousLoop } = require('./services/agentEngine');
 const app = express();
 const PORT = process.env.PORT || 8081;
 
-// Robust CORS Configuration supporting all local dev origins (127.0.0.1:5500, localhost:5173, localhost:3000) and cloud callers
+// Bulletproof Global CORS Header Middleware (guarantees CORS headers on 200, 400, 500 & OPTIONS responses)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Access-Control-Allow-Origin');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  next();
+});
+
 const corsOptions = {
-  origin: '*',
+  origin: true, // Dynamically echo request origin (127.0.0.1:5500, localhost:5173, etc.)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  credentials: false,
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Access-Control-Allow-Origin'],
+  credentials: true,
   optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
 app.use(express.json());
 
 // Mount Agent API Routes
@@ -62,6 +78,10 @@ async function bootActiveAgents() {
 
 app.listen(PORT, async () => {
   console.log(`[Server] Autonomous AI Creator API running on port ${PORT}`);
-  await ensureDbSchema();
-  await bootActiveAgents();
+  try {
+    await ensureDbSchema();
+    await bootActiveAgents();
+  } catch (err) {
+    console.error('[Server Boot Warning] DB schema initialization deferred:', err.message);
+  }
 });

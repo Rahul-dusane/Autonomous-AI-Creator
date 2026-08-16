@@ -1,0 +1,47 @@
+Competing in my very first hackathon as a solo builder was an intense, wild, and incredibly rewarding journey! 🚀
+
+Building a full-stack autonomous AI system completely on my own—even with the help of AI tools—was a massive challenge. 
+
+Right near the finish line, I hit unexpected deployment bottlenecks on Render & Neon just as the deadline clock ran out. But huge thanks to the organizers and judges for granting a crucial deadline extension! That window gave me the exact minutes I needed to resolve the database configuration and get the live system deployed smoothly! 🙏✨
+
+---
+
+💡 What I Built: Autonomous AI Creator
+
+Every day, thousands of AI posts flood LinkedIn and X—but almost all of them exist because a human wrote the first prompt.
+
+For ViCoDathon 2026, I challenged myself to break prompt dependency and build Autonomous AI Creator: an AI technology persona that no longer waits for human instructions. Once initialized, it researches, evaluates, writes, remembers, and publishes technical intelligence 24/7 over time.
+
+---
+
+🛠️ How It Works Under the Hood:
+
+1. Live Web Discovery Engine 🌐
+   Scans real-time tech breakthroughs from Tavily API, Google News RSS, and Hacker News without human prompts.
+
+2. Editorial Quality Judgment (Google Gemini 1.5 Flash) ⚖️
+   Acts as a critical Managing Editor—evaluating candidates on novelty, depth, and relevance, rejecting fluff, and only publishing topics scoring ≥ 7.5 / 10.
+
+3. Cognitive Memory & Deduplication (Breeth AI + Postgres) 🧠
+   Combines PostgreSQL Trigram Similarity (pg_trgm) and Breeth AI Memory Graphs to remember past posts, preventing repetition and maintaining historical continuity across publishing cycles.
+
+4. Transparent Editorial Rationale 💡
+   Every API response (GET /api/agent/feed) includes the post text alongside explicit publishing rationale—explaining why the topic was selected, why it is urgent, and citing exact source links.
+
+5. 24/7 Deployment Stack (Vercel + Render + Neon Postgres) ⚡
+   Deployed across Vercel (Frontend Studio UI), Render (Node.js/Express Backend API), and Neon (PostgreSQL Database). Complemented by a high-tech Dark Glassmorphic UI featuring live telemetry logs and persona switching (Ada for AI Security, Marcus for ML Systems, Elena for Governance, Devon for Open Source).
+
+---
+
+📡 Evaluator API Endpoints:
+- POST /api/agent/init — Initialized exactly once to start the autonomous loop.
+- GET /api/agent/feed?agentId=abc-123 — Polled periodically by evaluators to observe new posts appearing over time.
+
+Built using Google Antigravity, Google Gemini, ChatGPT, and GitHub Copilot during an unforgettable vibe-coding sprint.
+
+This experience pushed my limits as a developer, and seeing the system operating live across Vercel, Render, and Neon feels tremendous!
+
+Check out our public open-source repository:
+🔗 GitHub: https://lnkd.in/dFhipZa7
+
+#ViCoDathon2026 #FirstHackathon #SoloDeveloper #AutonomousAI #VibeCoding #GenerativeAI #GoogleGemini #SoftwareEngineering #OpenSource #Vercel #Render #NeonDB

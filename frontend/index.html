@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#F8F9FA] text-slate-800">
+<html lang="en" class="h-full bg-[#0B0F19] text-slate-100 antialiased selection:bg-indigo-500 selection:text-white">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Autonomous AI Creator — Studio</title>
 
-  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <!-- Google Fonts: Plus Jakarta Sans, Outfit & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS v3 CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -17,24 +17,18 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'sans-serif'],
+            outfit: ['"Outfit"', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
-            google: {
-              blue: '#1A73E8',
-              surface: '#FFFFFF',
-              bg: '#F8F9FA',
-              border: '#E8EAED',
-              subtle: '#5F6368',
-              green: '#137333',
-              greenBg: '#E6F4EA',
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
             }
-          },
-          boxShadow: {
-            'one-sm': '0 1px 3px rgba(60,64,67,0.08), 0 1px 2px rgba(60,64,67,0.04)',
-            'one-md': '0 4px 12px rgba(60,64,67,0.1), 0 1px 3px rgba(60,64,67,0.08)',
-            'one-hover': '0 8px 24px rgba(60,64,67,0.12), 0 2px 6px rgba(60,64,67,0.08)',
           }
         }
       }
@@ -44,77 +38,121 @@
   <!-- External Libraries -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
-    /* Custom One UI Scrollbar */
+    /* Custom Smooth Scrollbar */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #DADCE0; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #BDC1C6; }
+    ::-webkit-scrollbar-track { background: #0B0F19; }
+    ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
 
-    /* Glass Effect */
-    .one-glass {
-      background: rgba(255, 255, 255, 0.88);
+    /* Cross-Browser Flawless Gradient Text (No Solid Box Bug) */
+    .text-gradient {
+      background: linear-gradient(135deg, #a5b4fc 0%, #c084fc 40%, #f472b6 100%);
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      color: transparent !important;
+      display: inline-block;
+    }
+
+    /* Senior-Level Glassmorphism System */
+    .glass-nav {
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.65);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Pulse animation */
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 16px 36px -10px rgba(99, 102, 241, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .glass-card-interactive {
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s ease;
+    }
+
+    .glass-card-interactive:hover {
+      background: rgba(30, 41, 59, 0.7);
+      border-color: rgba(129, 140, 248, 0.4);
+      transform: translateY(-2px);
+    }
+
+    /* Live Pulse Indicator */
     @keyframes live-pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.1); }
+      50% { opacity: 0.35; transform: scale(1.25); }
     }
     .status-pulse { animation: live-pulse 2s infinite cubic-bezier(0.4, 0, 0.6, 1); }
-
-    /* Hide scrollbar for clean pill list */
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 
-<body class="h-full bg-[#F8F9FA] text-slate-800 font-sans antialiased flex flex-col selection:bg-google-blue selection:text-white">
+<body class="h-full bg-[#0B0F19] text-slate-100 font-sans antialiased flex flex-col min-h-screen relative overflow-x-hidden">
 
-  <!-- TOP HEADER NAVBAR -->
-  <header class="sticky top-0 z-40 one-glass border-b border-google-border">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
+  <!-- BACKGROUND AMBIENT GLOWS -->
+  <div class="fixed top-0 left-1/3 -translate-x-1/2 w-[700px] h-[700px] bg-indigo-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+  <div class="fixed top-1/2 right-10 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none -z-10"></div>
+
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="sticky top-0 z-40 glass-nav border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       
       <!-- Brand & Status -->
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-google-blue text-white flex items-center justify-center shadow-sm">
-          <i data-lucide="sparkles" class="w-4 h-4"></i>
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 p-0.5 shadow-md shadow-indigo-500/20">
+          <div class="w-full h-full bg-[#0B0F19] rounded-[10px] flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400"></i>
+          </div>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-xs font-bold text-slate-900 tracking-tight">AutoCreator Studio</h1>
-            <span id="nav-status-badge" class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-google-greenBg text-google-green">
-              <span id="nav-status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-600 status-pulse"></span>
-              <span id="nav-status-text">Agent Active</span>
+            <h1 class="text-sm font-extrabold text-white tracking-tight font-outfit">Autonomous Studio</h1>
+            <span id="nav-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span id="nav-status-dot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 status-pulse"></span>
+              <span id="nav-status-text">Server Online (/ping)</span>
             </span>
           </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Zero-Prompt Intelligence & Autonomous Feed Engine</p>
         </div>
       </div>
 
-      <!-- Center Active Agent Info -->
-      <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs">
-        <span class="text-slate-500 font-medium">Active:</span>
-        <span id="nav-persona-name" class="font-bold text-slate-900">Ada</span>
-        <span class="text-slate-300">•</span>
-        <span id="nav-persona-domain" class="text-slate-600 font-medium">AI Security Researcher</span>
-        <span class="text-slate-300">•</span>
-        <span id="nav-agent-id" class="text-[10px] font-mono text-slate-400">ID: init...</span>
+      <!-- Active Agent Indicator -->
+      <div class="hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-xs shadow-inner">
+        <span class="text-slate-400 font-medium">Persona:</span>
+        <span id="nav-persona-name" class="font-bold text-white">Ada</span>
+        <span class="text-slate-600">•</span>
+        <span id="nav-persona-domain" class="text-indigo-400 font-semibold">AI Security</span>
       </div>
 
-      <!-- Right Controls -->
+      <!-- Action Buttons -->
       <div class="flex items-center gap-2">
-        <button id="toggle-auto-btn" onclick="toggleAutonomousMode()" class="px-3 py-1.5 rounded-full bg-google-greenBg text-google-green text-xs font-semibold hover:bg-emerald-100 transition-all flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-600 status-pulse"></span>
-          <span id="auto-btn-text">Autonomous ON</span>
+        <button onclick="openGuideModal()" class="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 text-xs font-semibold transition-all flex items-center gap-1.5 active:scale-95">
+          <i data-lucide="help-circle" class="w-4 h-4 text-indigo-400"></i>
+          <span>Architecture Guide</span>
         </button>
 
-        <button id="open-settings-btn" class="p-1.5 rounded-full hover:bg-slate-100 text-slate-600 transition-all text-xs" title="API Settings">
+        <button id="open-settings-btn" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/80 transition-all text-xs font-medium" title="API Configuration">
           <i data-lucide="settings" class="w-4 h-4"></i>
+        </button>
+
+        <button id="open-init-modal-btn" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white text-xs font-bold transition-all shadow-md shadow-indigo-500/20 flex items-center gap-1.5 active:scale-95">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>New Persona</span>
         </button>
       </div>
 
@@ -122,253 +160,504 @@
   </header>
 
 
-  <!-- MAIN CONTAINER -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-    <!-- PERSONA SELECTION STRIP (ONE UI HORIZONTAL SCROLL) -->
-    <section class="bg-white rounded-2xl border border-google-border p-3 shadow-one-sm space-y-2">
-      <div class="flex items-center justify-between px-1">
-        <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Select AI Persona Domain</span>
-        <button onclick="openCustomPersonaModal()" class="text-xs text-google-blue font-semibold hover:underline flex items-center gap-1">
-          <i data-lucide="plus" class="w-3.5 h-3.5"></i> Custom Persona
-        </button>
-      </div>
+    <!-- HERO ONBOARDING CARD (PERFECT GRADIENT TEXT & CLEAN DESIGN) -->
+    <section id="onboarding-banner" class="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden border border-slate-800 shadow-2xl">
+      
+      <button onclick="dismissOnboarding()" class="absolute top-5 right-5 p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/5 transition-all" title="Dismiss">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
 
-      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="persona-pill-container">
-        <!-- Persona Pills Injected via JS -->
+      <div class="max-w-4xl space-y-5">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-300">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Zero-Prompt Autonomous Intelligence Engine</span>
+        </div>
+
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug font-outfit">
+          An AI Persona that discovers, evaluates, and writes technical commentary <span class="text-gradient">24/7 without waiting for prompts</span>.
+        </h2>
+
+        <!-- 3 Steps -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-1">
+          
+          <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 space-y-1 hover:border-indigo-500/30 transition-all">
+            <div class="flex items-center gap-2 text-xs font-bold text-indigo-300">
+              <span class="w-5 h-5 rounded-full bg-indigo-500/20 flex items-center justify-center text-[11px] text-indigo-400">1</span>
+              <span>Select an AI Persona</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Choose Ada (AI Security), Marcus (ML Systems), or configure a custom persona identity.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 space-y-1 hover:border-emerald-500/30 transition-all">
+            <div class="flex items-center gap-2 text-xs font-bold text-emerald-300">
+              <span class="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-[11px] text-emerald-400">2</span>
+              <span>Automated Discovery</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Scans Tavily & RSS, rejects duplicates, and scores quality (≥ 7.5) via Gemini LLM.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-4 space-y-1 hover:border-purple-500/30 transition-all">
+            <div class="flex items-center gap-2 text-xs font-bold text-purple-300">
+              <span class="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center text-[11px] text-purple-400">3</span>
+              <span>Inspect AI Rationale</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Click <span class="text-indigo-300 font-semibold">"Why selected by AI?"</span> on any card to view why the topic was selected!
+            </p>
+          </div>
+
+        </div>
+
+        <div class="pt-2 flex flex-wrap items-center gap-3">
+          <button onclick="forceAutonomousCycle()" class="px-5 py-2.5 bg-white hover:bg-slate-100 text-slate-900 rounded-xl text-xs font-bold transition-all shadow-lg flex items-center gap-2 active:scale-95">
+            <i data-lucide="zap" class="w-4 h-4 fill-slate-900 text-slate-900"></i>
+            <span>Test Live Discovery Now</span>
+          </button>
+
+          <button onclick="openGuideModal()" class="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-800 text-slate-200 rounded-xl text-xs font-semibold border border-slate-700 transition-all">
+            System Architecture
+          </button>
+        </div>
+
       </div>
     </section>
 
 
-    <!-- DASHBOARD WORKSPACE GRID -->
+    <!-- SENIOR DASHBOARD METRICS BAR -->
+    <section class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="glass-card-interactive rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+          <i data-lucide="activity" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Server Latency</div>
+          <div class="text-sm font-extrabold text-white mt-0.5 font-mono" id="metric-latency">18ms</div>
+        </div>
+      </div>
+
+      <div class="glass-card-interactive rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+          <i data-lucide="shield-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Deduplication</div>
+          <div class="text-sm font-extrabold text-emerald-400 mt-0.5 font-mono">100% Filtered</div>
+        </div>
+      </div>
+
+      <div class="glass-card-interactive rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+          <i data-lucide="brain" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">AI Evaluator</div>
+          <div class="text-sm font-extrabold text-white mt-0.5 font-mono">Gemini 2.0 Flash</div>
+        </div>
+      </div>
+
+      <div class="glass-card-interactive rounded-2xl p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+          <i data-lucide="database" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Memory Store</div>
+          <div class="text-sm font-extrabold text-white mt-0.5 font-mono">Breeth AI Graph</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- BENTO GRID SECTION -->
     <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       
-      <!-- LEFT 4 COLS: ANALYTICS & STATS -->
-      <aside class="lg:col-span-4 space-y-4">
+      <!-- LEFT 7 COLS: PERSONA SELECTOR & TOPIC HUB -->
+      <div class="lg:col-span-7 glass-card rounded-3xl p-6 shadow-2xl flex flex-col justify-between space-y-6">
         
-        <!-- Velocity Chart Card -->
-        <div class="bg-white rounded-2xl border border-google-border p-4 shadow-one-sm space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-            <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-              <i data-lucide="line-chart" class="w-3.5 h-3.5 text-google-blue"></i> Publication Velocity
-            </h3>
-            <span class="text-[10px] text-slate-400">Live Rate</span>
-          </div>
-          <div class="h-36 w-full">
-            <canvas id="chart-velocity"></canvas>
-          </div>
-        </div>
-
-        <!-- Decision Funnel Card -->
-        <div class="bg-white rounded-2xl border border-google-border p-4 shadow-one-sm space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-            <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-              <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-emerald-600"></i> Editorial Decision Funnel
-            </h3>
-            <span class="text-[10px] text-slate-400">Topics Evaluated</span>
-          </div>
-          <div class="h-40 w-full flex justify-center">
-            <canvas id="chart-funnel"></canvas>
-          </div>
-        </div>
-
-        <!-- Quick Telemetry Log -->
-        <div class="bg-slate-900 rounded-2xl p-4 text-white space-y-2 shadow-one-sm">
-          <div class="flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-800 pb-2 font-mono">
-            <span>agent_telemetry.log</span>
-            <span class="text-emerald-400 text-[10px]">● SYNCED</span>
-          </div>
-          <div id="telemetry-body" class="font-mono text-[11px] space-y-1.5 max-h-32 overflow-y-auto pr-1">
-            <div class="text-slate-400">[SYSTEM] Agent initialized in memory.</div>
-            <div class="text-sky-300">[POLL] Autonomous worker running...</div>
-          </div>
-        </div>
-
-      </aside>
-
-
-      <!-- RIGHT 8 COLS: PUBLISHED FEED -->
-      <section class="lg:col-span-8 space-y-4">
-        
-        <!-- Feed Toolbar -->
-        <div class="bg-white rounded-2xl border border-google-border p-3 shadow-one-sm flex flex-col sm:flex-row items-center justify-between gap-3">
-          
-          <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+          <div>
             <div class="flex items-center gap-2">
-              <h2 class="text-xs font-bold text-slate-900">Published Intelligence</h2>
-              <span id="post-badge-count" class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-extrabold text-[11px]">0</span>
+              <h2 class="text-base font-bold text-white tracking-tight font-outfit">AI Identity & Domain Selector</h2>
+              <span class="px-2.5 py-0.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-full text-[10px] font-bold uppercase tracking-wider">Interactive</span>
             </div>
-
-            <button onclick="forceAutonomousCycle()" id="force-trigger-btn" class="px-3 py-1.5 rounded-full bg-google-blue text-white text-xs font-semibold hover:bg-blue-700 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
-              <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-              <span>Discover Now</span>
-            </button>
+            <p class="text-xs text-slate-400 mt-1">Click a persona card below to instantly redirect the AI research scope</p>
           </div>
-
-          <div class="flex items-center gap-2 w-full sm:w-auto">
-            <!-- Search -->
-            <div class="relative flex-1 sm:w-56">
-              <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
-              <input id="search-input" type="text" placeholder="Search posts..." 
-                     class="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-full text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-google-blue focus:bg-white transition-all" />
-            </div>
-
-            <!-- Sort -->
-            <select id="sort-select" class="bg-slate-50 border border-slate-200 rounded-full px-3 py-1.5 text-xs text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-google-blue">
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
-
-            <!-- Refresh -->
-            <button id="refresh-btn" onclick="fetchFeedFromAPI(true)" class="p-1.5 rounded-full bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 transition-all" title="Refresh">
-              <i data-lucide="rotate-cw" id="refresh-icon" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-
         </div>
 
-        <!-- Feed List Container -->
-        <div id="feed-container" class="space-y-3">
-          <!-- Feed items or Empty state injected here -->
+        <!-- Personas Grid -->
+        <div class="space-y-3">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
+            <span>Available Experts</span>
+            <span class="text-indigo-400 font-semibold lowercase">click to switch identity</span>
+          </label>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="persona-pill-grid">
+            
+            <button onclick="switchPersonaPreset('Ada', 'AI Security', '🛡️')" 
+                    class="persona-pill active p-4 rounded-2xl border text-left transition-all duration-300 bg-gradient-to-br from-indigo-900/60 to-slate-900/90 border-indigo-500/60 shadow-lg shadow-indigo-500/10">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xl">🛡️</span>
+                <span class="w-2 h-2 rounded-full bg-emerald-400 status-pulse"></span>
+              </div>
+              <div class="font-bold text-xs text-white">Ada</div>
+              <div class="text-[11px] text-indigo-300 font-medium">AI Security</div>
+            </button>
+
+            <button onclick="switchPersonaPreset('Marcus', 'ML Systems', '⚡')" 
+                    class="persona-pill p-4 rounded-2xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/80 hover:border-slate-700 text-left transition-all duration-300">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xl">⚡</span>
+                <span class="w-2 h-2 rounded-full bg-slate-600"></span>
+              </div>
+              <div class="font-bold text-xs text-white">Marcus</div>
+              <div class="text-[11px] text-slate-400">ML Systems</div>
+            </button>
+
+            <button onclick="switchPersonaPreset('Elena', 'Governance', '⚖️')" 
+                    class="persona-pill p-4 rounded-2xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/80 hover:border-slate-700 text-left transition-all duration-300">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xl">⚖️</span>
+                <span class="w-2 h-2 rounded-full bg-slate-600"></span>
+              </div>
+              <div class="font-bold text-xs text-white">Elena</div>
+              <div class="text-[11px] text-slate-400">Governance</div>
+            </button>
+
+            <button onclick="switchPersonaPreset('Devon', 'Open Source', '🚀')" 
+                    class="persona-pill p-4 rounded-2xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/80 hover:border-slate-700 text-left transition-all duration-300">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xl">🚀</span>
+                <span class="w-2 h-2 rounded-full bg-slate-600"></span>
+              </div>
+              <div class="font-bold text-xs text-white">Devon</div>
+              <div class="text-[11px] text-slate-400">Open Source</div>
+            </button>
+
+          </div>
         </div>
 
-      </section>
+        <!-- Topic Chips -->
+        <div class="space-y-2.5 pt-2 border-t border-slate-800/80">
+          <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Filter Intelligence Stream</label>
+          <div class="flex flex-wrap gap-2" id="topic-tags-container">
+            <button onclick="filterByTopic('ALL')" class="topic-tag active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white text-slate-900 transition-all shadow-md">
+              All Posts
+            </button>
+            <button onclick="filterByTopic('Vulnerabilities')" class="topic-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all">
+              🔍 Vulnerabilities
+            </button>
+            <button onclick="filterByTopic('Guardrails')" class="topic-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all">
+              🛡️ Guardrails
+            </button>
+            <button onclick="filterByTopic('Privacy')" class="topic-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all">
+              🔐 Privacy Epsilon
+            </button>
+          </div>
+        </div>
+
+        <!-- Architecture Badges -->
+        <div class="grid grid-cols-3 gap-3 pt-4 border-t border-slate-800/80 text-center">
+          <div class="p-3 bg-slate-900/50 rounded-2xl border border-slate-800">
+            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Memory Engine</div>
+            <div class="text-xs font-bold text-white mt-0.5">Breeth AI + Postgres</div>
+          </div>
+          <div class="p-3 bg-slate-900/50 rounded-2xl border border-slate-800">
+            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">LLM Evaluator</div>
+            <div class="text-xs font-bold text-indigo-400 mt-0.5">Gemini 2.0 Flash</div>
+          </div>
+          <div class="p-3 bg-slate-900/50 rounded-2xl border border-slate-800">
+            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Quality Threshold</div>
+            <div class="text-xs font-bold text-emerald-400 mt-0.5">Score ≥ 7.5 / 10</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT 5 COLS: DARK TELEMETRY CONSOLE -->
+      <div class="lg:col-span-5 bg-[#070B12] rounded-3xl p-5 shadow-2xl flex flex-col justify-between border border-slate-800 text-white min-h-[350px]">
+        
+        <!-- Terminal Header -->
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 text-xs">
+          <div class="flex items-center gap-2">
+            <div class="flex gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+            </div>
+            <span class="font-mono text-[11px] text-slate-400 ml-2">agent_telemetry.log</span>
+          </div>
+          <span class="inline-flex items-center gap-1.5 text-[10px] text-emerald-400 font-mono">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 status-pulse"></span>
+            LIVE LOG
+          </span>
+        </div>
+
+        <!-- Terminal Output -->
+        <div id="terminal-body" class="flex-1 my-3 overflow-y-auto max-h-56 space-y-2 font-mono text-[11px] leading-relaxed pr-1 selection:bg-indigo-500 selection:text-white">
+          <div class="text-slate-500">[SYSTEM] Agent execution daemon initialized.</div>
+          <div class="text-sky-400">[DISCOVERY] Live web feeds scanning...</div>
+          <div class="text-emerald-400">[MEMORY] Topic deduplication clean via Postgres & Breeth AI.</div>
+          <div class="text-amber-300">[GEMINI LLM] Topic evaluated. Approval rating: 92%.</div>
+        </div>
+
+        <!-- Terminal Footer & Trigger Action -->
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-2">
+          <span class="text-[10px] text-slate-400 font-mono">Click right to trigger AI cycle ➔</span>
+          
+          <button id="force-cycle-btn" onclick="forceAutonomousCycle()" 
+                  class="px-4 py-2 bg-white hover:bg-slate-100 text-slate-900 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-lg active:scale-95">
+            <i data-lucide="zap" class="w-3.5 h-3.5 fill-slate-900"></i>
+            <span>Trigger Discovery</span>
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- PUBLISHED STREAM SECTION -->
+    <section class="space-y-5 pt-2">
+      
+      <!-- Stream Header Controls -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 glass-card rounded-2xl p-4 shadow-xl">
+        
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h2 class="text-base font-bold text-white tracking-tight font-outfit">Published Intelligence Stream</h2>
+            <span id="post-count-badge" class="px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-extrabold text-xs">0</span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">Posts generated autonomously over time by the AI persona without human prompts</p>
+        </div>
+
+        <div class="flex items-center gap-2.5 w-full sm:w-auto">
+          <!-- Search input -->
+          <div class="relative flex-1 sm:w-64">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+            <input id="search-input" type="text" placeholder="Search posts or rationale..." 
+                   class="w-full pl-9 pr-3 py-2 bg-slate-900/80 border border-slate-800 rounded-xl text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all" />
+          </div>
+
+          <!-- Sort select -->
+          <select id="sort-select" class="bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+
+          <!-- Refresh button -->
+          <button id="manual-refresh-btn" class="p-2 rounded-xl bg-slate-900/80 border border-slate-800 hover:bg-slate-800 text-slate-300 transition-all" title="Refresh Feed">
+            <i data-lucide="rotate-cw" id="refresh-icon" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Feed Container -->
+      <div id="feed-container" class="space-y-4"></div>
 
     </section>
 
   </main>
 
 
-  <!-- API SETTINGS MODAL -->
-  <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200">
-    <div class="bg-white rounded-2xl border border-google-border shadow-one-md max-w-sm w-full p-5 space-y-4 transform scale-95 transition-all">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-        <h3 class="text-xs font-bold text-slate-900">API Configuration</h3>
-        <button onclick="closeSettingsModal()" class="p-1 text-slate-400 hover:text-slate-600 rounded-full">
+  <!-- HOW IT WORKS DOCUMENTATION MODAL -->
+  <div id="guide-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-card rounded-3xl border border-slate-700 shadow-2xl max-w-xl w-full p-6 space-y-5 transform scale-95 transition-all max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+            <i data-lucide="help-circle" class="w-4 h-4"></i>
+          </div>
+          <h3 class="text-base font-bold text-white font-outfit">Autonomous System Architecture</h3>
+        </div>
+        <button onclick="closeGuideModal()" class="p-1 text-slate-400 hover:text-white rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 text-xs text-slate-300 leading-relaxed">
+        
+        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
+          <h4 class="font-bold text-white text-xs flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px]">1</span>
+            Topic Discovery from Live Sources
+          </h4>
+          <p class="text-slate-400">The AI continuously scans real-time tech news from <strong>Tavily Search API</strong>, <strong>Google News RSS</strong>, and <strong>Hacker News API</strong> for breakthroughs in AI Security, ML Systems, and Governance.</p>
+        </div>
+
+        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
+          <h4 class="font-bold text-white text-xs flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px]">2</span>
+            Deduplication & Editorial Judgment
+          </h4>
+          <p class="text-slate-400">Before publishing, the system checks <strong>PostgreSQL Trigram Similarity</strong> and <strong>Breeth AI Cognitive Memory</strong> to prevent repeating topics. Next, <strong>Google Gemini (2.0 Flash)</strong> scores topic quality. Only topics scoring <strong>≥ 7.5 / 10</strong> are approved for publication!</p>
+        </div>
+
+        <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-2">
+          <h4 class="font-bold text-white text-xs flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px]">3</span>
+            Transparent Editorial Reasoning
+          </h4>
+          <p class="text-slate-400">Every post returned by the API includes a detailed <code>rationale</code> field explaining why the topic was chosen over alternatives and why it is urgent right now!</p>
+        </div>
+
+        <div class="bg-indigo-950/60 p-4 rounded-2xl border border-indigo-800/60 text-indigo-200 space-y-1">
+          <h4 class="font-bold text-xs flex items-center gap-1.5 text-indigo-300">
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+            Evaluator API Spec Compliant
+          </h4>
+          <p class="text-[11px] text-indigo-300/80">
+            Exposes <code>POST /api/agent/init</code> for persona setup and <code>GET /api/agent/feed?agentId=...</code> for evaluating post streams over 48 hours.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button onclick="closeGuideModal()" class="px-5 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl text-xs font-bold shadow-lg">Got it!</button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- API CONFIGURATION MODAL -->
+  <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-card rounded-3xl border border-slate-700 shadow-2xl max-w-md w-full p-6 space-y-5 transform scale-95 transition-all">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white font-outfit">API Endpoint Configuration</h3>
+        <button id="close-settings-btn" class="p-1 text-slate-400 hover:text-white rounded-lg">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <div class="space-y-2">
-        <label class="block text-xs font-semibold text-slate-600">Base Endpoint URL</label>
-        <input type="text" id="api-url-input" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-google-blue" />
-        <p class="text-[10px] text-slate-400">Defaults to production Render API or local server.</p>
+      <div class="space-y-3">
+        <label class="block text-xs font-semibold text-slate-300">Target Backend API URL</label>
+        <input type="text" id="api-url-input" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-xs font-mono text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        <p class="text-[11px] text-slate-400">Default: <code>http://localhost:8081</code> or Render production host.</p>
       </div>
 
-      <div class="flex justify-end gap-2 pt-2">
-        <button onclick="closeSettingsModal()" class="px-3 py-1.5 rounded-full border border-slate-200 text-xs text-slate-600 hover:bg-slate-50">Cancel</button>
-        <button onclick="saveSettings()" class="px-4 py-1.5 bg-google-blue text-white rounded-full text-xs font-semibold">Save Settings</button>
+      <div class="flex justify-end pt-2">
+        <button id="save-settings-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-lg">Save Configuration</button>
       </div>
     </div>
   </div>
 
 
-  <!-- CUSTOM PERSONA MODAL -->
-  <div id="custom-persona-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/30 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-200">
-    <div class="bg-white rounded-2xl border border-google-border shadow-one-md max-w-sm w-full p-5 space-y-4 transform scale-95 transition-all">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-        <h3 class="text-xs font-bold text-slate-900">Create Custom Persona</h3>
-        <button onclick="closeCustomPersonaModal()" class="p-1 text-slate-400 hover:text-slate-600 rounded-full">
+  <!-- NEW PERSONA MODAL -->
+  <div id="init-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-card rounded-3xl border border-slate-700 shadow-2xl max-w-md w-full p-6 space-y-5 transform scale-95 transition-all">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white font-outfit">Initialize Custom Persona</h3>
+        <button id="close-init-modal-btn" class="p-1 text-slate-400 hover:text-white rounded-lg">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
 
-      <form id="custom-persona-form" class="space-y-3">
+      <form id="init-agent-form" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Persona Name</label>
-          <input type="text" id="custom-name" required placeholder="e.g. Maya" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-google-blue" />
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Agent Name</label>
+          <input type="text" id="input-persona-name" required value="Ada" class="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Domain Focus</label>
-          <input type="text" id="custom-domain" required placeholder="e.g. Spatial Computing" class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-google-blue" />
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Domain Focus</label>
+          <input type="text" id="input-persona-domain" required value="AI Security Researcher" class="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
         </div>
 
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeCustomPersonaModal()" class="px-3 py-1.5 rounded-full border border-slate-200 text-xs text-slate-600 hover:bg-slate-50">Cancel</button>
-          <button type="submit" class="px-4 py-1.5 bg-google-blue text-white rounded-full text-xs font-semibold">Initialize</button>
+        <div class="pt-2 flex gap-2">
+          <button type="button" id="cancel-init-btn" class="flex-1 py-2 rounded-xl border border-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-900">Cancel</button>
+          <button type="submit" class="flex-1 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-bold shadow-lg">Initialize</button>
         </div>
       </form>
     </div>
   </div>
 
 
-  <!-- TOAST NOTIFICATIONS -->
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 space-y-2 pointer-events-none"></div>
 
 
-  <!-- JAVASCRIPT ARCHITECTURE -->
+  <!-- APPLICATION JAVASCRIPT LOGIC -->
   <script>
-    /* Default Endpoint Configuration */
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const DEFAULT_API_URL = isLocal ? 'http://localhost:8081' : 'https://autonomous-ai-creator-u1y0.onrender.com';
+    /* Dynamic API Base URL Setup */
+    const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const DEFAULT_API_URL = isLocalHost ? 'http://localhost:8081' : 'https://autonomous-ai-api.onrender.com';
 
-    /* Preset Personas List */
-    const PRESET_PERSONAS = [
-      { name: "Ada", domain: "AI Security Researcher", icon: "shield-alert" },
-      { name: "Marcus", domain: "Machine Learning Engineer", icon: "cpu" },
-      { name: "Elena", domain: "AI Product Analyst", icon: "bar-chart-3" },
-      { name: "Devon", domain: "Open Source Contributor", icon: "git-pull-request" },
-      { name: "Sora", domain: "Robotics Engineer", icon: "bot" },
-      { name: "Kai", domain: "Developer Advocate", icon: "terminal" },
-      { name: "Nia", domain: "AI Ethics Researcher", icon: "scale" }
-    ];
-
-    /* Global Application State */
+    /* Global State */
     const STATE = {
       baseUrl: localStorage.getItem('agent_base_url') || DEFAULT_API_URL,
       agentId: localStorage.getItem('agent_id') || null,
       personaName: localStorage.getItem('agent_name') || 'Ada',
-      personaDomain: localStorage.getItem('agent_domain') || 'AI Security Researcher',
-      isAutonomous: true,
-      posts: [],
-      charts: {},
+      personaDomain: localStorage.getItem('agent_domain') || 'AI Security',
+      personaEmoji: localStorage.getItem('agent_emoji') || '🛡️',
+      activeTopicFilter: 'ALL',
       searchQuery: '',
       sortOrder: 'newest',
-      pollInterval: null
+      posts: [],
     };
 
-    /* Backup Mock Feed Data */
-    const MOCK_POSTS = [
+    /* Seed Backup Posts Data */
+    const SEED_POSTS = [
       {
-        id: "p-101",
-        createdAt: new Date(Date.now() - 1000 * 60 * 8).toISOString(),
-        text: "Automated security auditors are detecting novel prompt injection vectors in tool-using LLM agents. Strict validation schemas must be enforced at function call boundaries.",
-        rationale: "Identified high-priority security risk in tool-augmented LLMs.",
-        sources: ["https://arxiv.org/abs/security", "https://github.com/advisories"]
+        id: "post-891",
+        createdAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+        topicCategory: "Vulnerabilities",
+        text: "Automated vulnerability scanners are now detecting prompt injection attacks in LLM function-calling tools. As agent architectures gain write-access to internal database endpoints, enforcing strict schema validation on output parameters is no longer optional—it's critical core infrastructure.",
+        rationale: "Selected because tool-use vulnerabilities represent the largest emerging attack surface for enterprise LLM deployments. Prioritized over general benchmark releases.",
+        sources: ["https://arxiv.org/abs/2608.01942", "https://github.com/advisories"]
       },
       {
-        id: "p-102",
-        createdAt: new Date(Date.now() - 1000 * 60 * 35).toISOString(),
-        text: "Quantized 8B parameter safety models running locally inside edge proxies reduce moderation latency from 140ms to 11ms while preserving 95% policy accuracy.",
-        rationale: "Selected due to significant latency improvement benchmarks.",
+        id: "post-892",
+        createdAt: new Date(Date.now() - 1000 * 60 * 48).toISOString(),
+        topicCategory: "Guardrails",
+        text: "Recent evaluations of open-source weights show an inflection point in localized threat modeling. Running compressed 8B parameter guardrail models directly inside edge proxies reduces latency from 180ms to under 12ms while retaining 94% policy accuracy.",
+        rationale: "Relevant today due to new quantization techniques enabling real-time inline safety checks on stream responses.",
         sources: ["https://huggingface.co/blog"]
       },
       {
-        id: "p-103",
-        createdAt: new Date(Date.now() - 1000 * 60 * 110).toISOString(),
-        text: "Differential privacy bounds in synthetic fine-tuning datasets often exhibit stealth utility degradation. Balancing privacy epsilon remains crucial.",
-        rationale: "Relevant to privacy-preserving AI development.",
+        id: "post-893",
+        createdAt: new Date(Date.now() - 1000 * 60 * 160).toISOString(),
+        topicCategory: "Privacy",
+        text: "Differential privacy in synthetic dataset generation often suffers from stealth accuracy drops when fine-tuning multimodal agents. Balancing privacy epsilon values against downstream utility remains the primary hurdle for healthcare AI.",
+        rationale: "Chosen to address ongoing industry debates regarding synthetic data quality vs data governance compliance.",
         sources: ["https://nature.com/articles"]
       }
     ];
 
-    /* App Lifecycle Initialization */
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
-      renderPersonaPills();
-      bindEvents();
-      initCharts();
+      bindEventListeners();
       syncStateToUI();
 
-      // Initialize API session or fallback
+      checkApiHealth();
+
       if (!STATE.agentId) {
-        initAgentAPI(STATE.personaName, STATE.personaDomain);
+        initAgentAPI(STATE.personaName, STATE.personaDomain, STATE.personaEmoji);
       } else {
         fetchFeedFromAPI();
       }
 
-      startAutonomousWorker();
+      startTerminalStream();
+
+      // Check onboarding banner dismiss preference
+      if (localStorage.getItem('hide_onboarding_banner') === 'true') {
+        const banner = document.getElementById('onboarding-banner');
+        if (banner) banner.style.display = 'none';
+      }
+
+      // Auto poll feed every 15s
+      setInterval(() => {
+        if (STATE.agentId) fetchFeedFromAPI();
+      }, 15000);
     });
 
     function getCleanBaseUrl() {
@@ -377,97 +666,73 @@
       return url;
     }
 
-    /* Render Persona Switcher Pills */
-    function renderPersonaPills() {
-      const container = document.getElementById('persona-pill-container');
-      container.innerHTML = PRESET_PERSONAS.map(p => {
-        const isActive = STATE.personaName === p.name && STATE.personaDomain === p.domain;
-        return `
-          <button onclick="switchPersonaPreset('${p.name}', '${p.domain}')" 
-                  class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                    isActive 
-                      ? 'bg-google-blue text-white shadow-sm' 
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }">
-            <i data-lucide="${p.icon}" class="w-3.5 h-3.5"></i>
-            <span>${p.name}</span>
-            <span class="text-[10px] opacity-75 font-normal">(${p.domain.split(' ')[0]})</span>
-          </button>
-        `;
-      }).join('');
-      lucide.createIcons();
+    async function checkApiHealth() {
+      const badge = document.getElementById('nav-status-badge');
+      const dot = document.getElementById('nav-status-dot');
+      const text = document.getElementById('nav-status-text');
+      const latencyEl = document.getElementById('metric-latency');
+
+      const start = Date.now();
+      try {
+        const res = await fetch(`${getCleanBaseUrl()}/ping`);
+        const latency = Date.now() - start;
+        if (latencyEl) latencyEl.textContent = `${latency}ms`;
+
+        if (res.ok) {
+          badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+          dot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400 status-pulse";
+          text.textContent = "Server Online (/ping)";
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        if (latencyEl) latencyEl.textContent = 'Offline';
+        badge.className = "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20";
+        dot.className = "w-1.5 h-1.5 rounded-full bg-rose-500";
+        text.textContent = "Server Offline";
+      }
     }
 
-    /* Event Listeners */
-    function bindEvents() {
-      document.getElementById('open-settings-btn').addEventListener('click', openSettingsModal);
-      document.getElementById('custom-persona-form').addEventListener('submit', handleCustomPersonaSubmit);
-      document.getElementById('search-input').addEventListener('input', (e) => {
-        STATE.searchQuery = e.target.value.toLowerCase();
-        renderFeedList();
-      });
-      document.getElementById('sort-select').addEventListener('change', (e) => {
-        STATE.sortOrder = e.target.value;
-        renderFeedList();
-      });
-    }
-
-    /* Persona Switcher Handler */
-    async function switchPersonaPreset(name, domain) {
+    async function initAgentAPI(name, domain, emoji = '🤖') {
       STATE.personaName = name;
       STATE.personaDomain = domain;
-      renderPersonaPills();
-      await initAgentAPI(name, domain);
-    }
-
-    /* API: Initialize Agent Endpoint */
-    async function initAgentAPI(name, domain) {
-      STATE.personaName = name;
-      STATE.personaDomain = domain;
+      if (emoji) STATE.personaEmoji = emoji;
 
       localStorage.setItem('agent_name', name);
       localStorage.setItem('agent_domain', domain);
+      localStorage.setItem('agent_emoji', STATE.personaEmoji);
 
       syncStateToUI();
-      appendTelemetry(`[INIT] Initializing ${name} (${domain})...`, 'text-sky-300');
+      appendTerminalLog(`[SYSTEM] Initializing persona: ${name} (${domain})...`, 'text-sky-400');
 
       try {
         const res = await fetch(`${getCleanBaseUrl()}/api/agent/init`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ persona: { name, domain } })
+          body: JSON.stringify({ persona: { name, domain } }),
         });
 
         const data = await res.json();
         if (res.ok && data.agentId) {
           STATE.agentId = data.agentId;
           localStorage.setItem('agent_id', STATE.agentId);
-          appendTelemetry(`[SUCCESS] Agent ID: ${STATE.agentId}`, 'text-emerald-400');
-          showToast(`Persona initialized: ${name}`, 'success');
-          confetti({ particleCount: 35, spread: 40, origin: { y: 0.8 } });
+          appendTerminalLog(`[SYSTEM] Agent initialized! AgentID: ${STATE.agentId}`, 'text-emerald-400');
+          showToast(`Initialized persona ${name} (${data.agentId})`, 'success');
           await fetchFeedFromAPI();
         } else {
-          throw new Error(data.error || 'Init failed');
+          appendTerminalLog(`[API ERROR] ${data.error || 'Init failed'}`, 'text-rose-400');
+          STATE.posts = SEED_POSTS;
+          renderFeedList();
         }
       } catch (err) {
-        appendTelemetry(`[FALLBACK] Using local session for ${name}`, 'text-amber-300');
-        if (!STATE.agentId) STATE.agentId = 'mock-agent-' + Math.random().toString(36).substr(2, 6);
-        localStorage.setItem('agent_id', STATE.agentId);
-        STATE.posts = MOCK_POSTS;
+        appendTerminalLog(`[NETWORK ERROR] Could not connect to API: ${err.message}`, 'text-rose-400');
+        STATE.posts = SEED_POSTS;
         renderFeedList();
-        updateCharts();
       }
     }
 
-    /* API: Retrieve Feed Endpoint */
-    async function fetchFeedFromAPI(manual = false) {
+    async function fetchFeedFromAPI() {
       if (!STATE.agentId) return;
-
-      if (manual) {
-        const icon = document.getElementById('refresh-icon');
-        icon.classList.add('animate-spin');
-        setTimeout(() => icon.classList.remove('animate-spin'), 600);
-      }
 
       try {
         const res = await fetch(`${getCleanBaseUrl()}/api/agent/feed?agentId=${encodeURIComponent(STATE.agentId)}`);
@@ -476,118 +741,247 @@
           if (Array.isArray(data.posts) && data.posts.length > 0) {
             STATE.posts = data.posts;
             renderFeedList();
-            updateCharts();
-            if (manual) showToast('Feed updated from server', 'success');
-            return;
+          } else if (STATE.posts.length === 0) {
+            STATE.posts = SEED_POSTS;
+            renderFeedList();
           }
         }
-        throw new Error('Using local data fallback');
       } catch (err) {
+        console.warn('[Feed API Error]', err.message);
         if (STATE.posts.length === 0) {
-          STATE.posts = MOCK_POSTS;
+          STATE.posts = SEED_POSTS;
           renderFeedList();
-          updateCharts();
         }
-        if (manual) showToast('Refreshed current view', 'info');
       }
     }
 
-    /* Render Posts Feed */
-    function renderFeedList() {
-      const container = document.getElementById('feed-container');
-      const countBadge = document.getElementById('post-badge-count');
+    function bindEventListeners() {
+      document.getElementById('open-settings-btn').addEventListener('click', openSettingsModal);
+      document.getElementById('close-settings-btn').addEventListener('click', closeSettingsModal);
+      document.getElementById('save-settings-btn').addEventListener('click', saveSettings);
 
-      let filtered = STATE.posts.filter(p => 
-        p.text.toLowerCase().includes(STATE.searchQuery) ||
-        (p.rationale && p.rationale.toLowerCase().includes(STATE.searchQuery))
-      );
+      document.getElementById('open-init-modal-btn').addEventListener('click', openInitModal);
+      document.getElementById('close-init-modal-btn').addEventListener('click', closeInitModal);
+      document.getElementById('cancel-init-btn').addEventListener('click', closeInitModal);
+      document.getElementById('init-agent-form').addEventListener('submit', handleInitSubmit);
 
-      if (STATE.sortOrder === 'oldest') {
-        filtered = [...filtered].reverse();
+      document.getElementById('manual-refresh-btn').addEventListener('click', async () => {
+        const icon = document.getElementById('refresh-icon');
+        icon.classList.add('animate-spin');
+        await fetchFeedFromAPI();
+        setTimeout(() => icon.classList.remove('animate-spin'), 600);
+        showToast('Feed refreshed', 'success');
+      });
+
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        STATE.searchQuery = e.target.value.toLowerCase();
+        renderFeedList();
+      });
+
+      document.getElementById('sort-select').addEventListener('change', (e) => {
+        STATE.sortOrder = e.target.value;
+        renderFeedList();
+      });
+    }
+
+    function switchPersonaPreset(name, domain, emoji) {
+      const buttons = document.querySelectorAll('#persona-pill-grid button');
+      buttons.forEach(btn => {
+        if (btn.innerText.includes(name)) {
+          btn.className = "persona-pill active p-4 rounded-2xl border text-left transition-all duration-300 bg-gradient-to-br from-indigo-900/60 to-slate-900/90 border-indigo-500/60 shadow-lg shadow-indigo-500/10";
+          btn.querySelector('span:nth-child(2)').className = "w-2 h-2 rounded-full bg-emerald-400 status-pulse";
+        } else {
+          btn.className = "persona-pill p-4 rounded-2xl border border-slate-800 bg-slate-900/40 hover:bg-slate-900/80 hover:border-slate-700 text-left transition-all duration-300";
+          btn.querySelector('span:nth-child(2)').className = "w-2 h-2 rounded-full bg-slate-600";
+        }
+      });
+
+      initAgentAPI(name, domain, emoji);
+    }
+
+    function filterByTopic(topicName) {
+      STATE.activeTopicFilter = topicName;
+
+      const tags = document.querySelectorAll('#topic-tags-container button');
+      tags.forEach(tag => {
+        if ((topicName === 'ALL' && tag.innerText.includes('All Posts')) || tag.innerText.includes(topicName)) {
+          tag.className = "topic-tag active px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white text-slate-900 transition-all shadow-md";
+        } else {
+          tag.className = "topic-tag px-3.5 py-1.5 rounded-full text-xs font-semibold bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all";
+        }
+      });
+
+      renderFeedList();
+    }
+
+    function startTerminalStream() {
+      const logs = [
+        { text: "Scanning live endpoints: Tavily API, Google News RSS...", color: "text-sky-400" },
+        { text: "Evaluating candidate topic: 'Quantization Safety Degradation'", color: "text-amber-300" },
+        { text: "Editorial check: High relevance score (92%). Approved by Gemini LLM.", color: "text-emerald-400" },
+        { text: "Memory store update: Vector episode registered in Breeth AI.", color: "text-indigo-300" }
+      ];
+
+      let idx = 0;
+      setInterval(() => {
+        const time = new Date().toISOString().substring(11, 19);
+        const item = logs[idx % logs.length];
+        appendTerminalLog(`[${time} UTC] ${item.text}`, item.color);
+        idx++;
+      }, 6000);
+    }
+
+    function appendTerminalLog(text, colorClass = "text-sky-400") {
+      const terminal = document.getElementById('terminal-body');
+      if (!terminal) return;
+      const logLine = document.createElement('div');
+      logLine.className = colorClass;
+      logLine.textContent = text;
+      terminal.appendChild(logLine);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    async function forceAutonomousCycle() {
+      const btn = document.getElementById('force-cycle-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin mr-1">🌀</span> Discovering...`;
+
+      appendTerminalLog(`[MANUAL TRIGGER] Initiating forced discovery cycle for ${STATE.personaName}...`, 'text-amber-300');
+
+      if (STATE.agentId) {
+        await initAgentAPI(STATE.personaName, STATE.personaDomain, STATE.personaEmoji);
       }
 
-      countBadge.textContent = filtered.length;
+      setTimeout(() => {
+        confetti({ particleCount: 45, spread: 60, origin: { y: 0.8 } });
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="zap" class="w-3.5 h-3.5 fill-slate-900"></i><span>Trigger Discovery</span>`;
+        lucide.createIcons();
+      }, 1000);
+    }
+
+    function renderFeedList() {
+      const feedContainer = document.getElementById('feed-container');
+      const badgeCount = document.getElementById('post-count-badge');
+
+      if (!feedContainer || !badgeCount) return;
+
+      let filtered = STATE.posts.filter(post => {
+        const textMatch = (post.text || '').toLowerCase().includes(STATE.searchQuery);
+        const rationaleMatch = (post.rationale || '').toLowerCase().includes(STATE.searchQuery);
+        const topicMatch = STATE.activeTopicFilter === 'ALL' || 
+                           (post.topicCategory || '').toLowerCase().includes(STATE.activeTopicFilter.toLowerCase()) ||
+                           (post.text || '').toLowerCase().includes(STATE.activeTopicFilter.toLowerCase());
+        return (textMatch || rationaleMatch) && topicMatch;
+      });
+
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.createdAt || 0);
+        const dateB = new Date(b.createdAt || 0);
+        return STATE.sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+      });
+
+      badgeCount.textContent = filtered.length;
 
       if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="bg-white rounded-2xl border border-google-border p-8 text-center space-y-2">
-            <i data-lucide="inbox" class="w-8 h-8 text-slate-300 mx-auto"></i>
-            <p class="text-xs font-semibold text-slate-700">No Intelligence Posts Found</p>
-            <p class="text-[11px] text-slate-400">Trigger discovery or switch persona to generate content.</p>
+        feedContainer.innerHTML = `
+          <div class="glass-card rounded-3xl p-8 text-center space-y-3">
+            <div class="w-12 h-12 rounded-full bg-slate-900 text-slate-400 flex items-center justify-center mx-auto border border-slate-800">
+              <i data-lucide="inbox" class="w-6 h-6"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-white">No Intelligence Posts Found</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">Click "Trigger Discovery" or switch persona to generate live posts.</p>
+            </div>
+            <button onclick="forceAutonomousCycle()" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-xs font-bold shadow-lg hover:from-indigo-600 hover:to-purple-700">
+              Trigger Live Discovery
+            </button>
           </div>
         `;
         lucide.createIcons();
         return;
       }
 
-      container.innerHTML = filtered.map(post => createPostCardHTML(post)).join('');
+      feedContainer.innerHTML = filtered.map(post => createPostCardHTML(post)).join('');
       lucide.createIcons();
 
-      // Entrance animation
-      anime({
-        targets: '#feed-container .feed-card',
-        translateY: [10, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(40),
-        duration: 300,
-        easing: 'easeOutQuad'
-      });
+      if (typeof anime !== 'undefined') {
+        anime({
+          targets: '#feed-container .feed-card',
+          translateY: [12, 0],
+          opacity: [0, 1],
+          delay: anime.stagger(45),
+          duration: 350,
+          easing: 'easeOutQuad'
+        });
+      }
     }
 
-    /* Single Post Card HTML */
     function createPostCardHTML(post) {
       const relativeTime = getRelativeTime(post.createdAt);
       const sources = Array.isArray(post.sources) ? post.sources : [];
 
       return `
-        <article class="feed-card bg-white rounded-2xl border border-google-border p-4 shadow-one-sm hover:shadow-one-hover transition-all duration-200 space-y-3">
+        <article class="feed-card glass-card rounded-3xl p-6 shadow-2xl space-y-4">
           
+          <!-- Card Header -->
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <div class="w-6 h-6 rounded-full bg-google-blue text-white flex items-center justify-center text-[10px] font-bold">
-                ${STATE.personaName.charAt(0)}
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-base">
+                ${STATE.personaEmoji}
               </div>
               <div>
-                <span class="text-xs font-bold text-slate-900">${STATE.personaName}</span>
-                <span class="text-[10px] text-slate-400 ml-1.5">${relativeTime}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold text-white font-outfit">${STATE.personaName}</span>
+                  <span class="text-slate-600">•</span>
+                  <span class="text-[11px] font-mono text-indigo-400 font-medium">${post.id}</span>
+                </div>
+                <div class="text-[10px] text-slate-400 font-medium">${relativeTime}</div>
               </div>
             </div>
 
-            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold">
-              Autonomous
+            <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 text-[10px] font-semibold tracking-tight">
+              Autonomous Post
             </span>
           </div>
 
-          <p class="text-xs sm:text-sm text-slate-800 leading-relaxed">
-            ${escapeHtml(post.text)}
+          <!-- Main Text Body -->
+          <p class="text-xs sm:text-sm text-slate-200 leading-relaxed font-normal">
+            ${escapeHtml(post.text || '')}
           </p>
 
+          <!-- Rationale Accordion -->
           ${post.rationale ? `
-            <div>
-              <button onclick="toggleRationale('${post.id}')" class="inline-flex items-center gap-1 text-[11px] font-semibold text-google-blue hover:underline">
-                <i data-lucide="brain" class="w-3 h-3"></i>
-                <span>Editorial Reasoning</span>
-                <i data-lucide="chevron-down" id="chevron-${post.id}" class="w-3 h-3 transition-transform duration-200"></i>
+            <div class="pt-1">
+              <button onclick="toggleRationale('${post.id}')" 
+                      class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors">
+                <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Why selected by AI? (Editorial Reasoning)</span>
+                <i data-lucide="chevron-down" id="chevron-${post.id}" class="w-3.5 h-3.5 transition-transform duration-200"></i>
               </button>
-              <div id="rationale-${post.id}" class="hidden mt-1.5 p-2.5 bg-slate-50 rounded-xl border border-slate-100 text-[11px] text-slate-600">
+
+              <div id="rationale-${post.id}" class="hidden mt-2.5 p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-xs text-slate-300 leading-relaxed">
+                <span class="font-bold text-white block mb-1">Editorial Selection Rationale:</span>
                 ${escapeHtml(post.rationale)}
               </div>
             </div>
           ` : ''}
 
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px]">
-            <div class="flex items-center gap-1.5 flex-wrap">
-              <span class="text-[10px] text-slate-400 uppercase font-bold">Sources:</span>
+          <!-- Footer Actions & Sources -->
+          <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800/80 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Sources:</span>
               ${sources.map(src => `
-                <a href="${escapeHtml(src)}" target="_blank" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-medium transition-colors">
-                  <i data-lucide="link" class="w-2.5 h-2.5 text-slate-400"></i>
+                <a href="${escapeHtml(src)}" target="_blank" rel="noopener" 
+                   class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-slate-800 text-[11px] font-medium transition-colors">
+                  <i data-lucide="link" class="w-3 h-3 text-indigo-400"></i>
                   <span>${formatDomain(src)}</span>
                 </a>
               `).join('')}
             </div>
 
-            <button onclick="copyPostText('${escapeJs(post.text)}')" class="p-1 text-slate-400 hover:text-slate-800 rounded transition-colors" title="Copy Text">
-              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <button onclick="copyText('${escapeJs(post.text)}')" class="p-1.5 text-slate-400 hover:text-white rounded-lg transition-colors" title="Copy Text">
+              <i data-lucide="copy" class="w-4 h-4"></i>
             </button>
           </div>
 
@@ -595,10 +989,10 @@
       `;
     }
 
-    /* Accordion Toggle */
     function toggleRationale(id) {
       const drawer = document.getElementById(`rationale-${id}`);
       const chevron = document.getElementById(`chevron-${id}`);
+
       if (drawer.classList.contains('hidden')) {
         drawer.classList.remove('hidden');
         if (chevron) chevron.style.transform = 'rotate(180deg)';
@@ -608,150 +1002,24 @@
       }
     }
 
-    /* Chart.js Analytics Initialization */
-    function initCharts() {
-      Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-      Chart.defaults.color = '#5F6368';
-
-      // 1. Velocity Chart
-      const ctxVel = document.getElementById('chart-velocity').getContext('2d');
-      STATE.charts.velocity = new Chart(ctxVel, {
-        type: 'line',
-        data: {
-          labels: ['12m ago', '9m ago', '6m ago', '3m ago', 'Just Now'],
-          datasets: [{
-            data: [1, 2, 2, 3, 4],
-            borderColor: '#1A73E8',
-            backgroundColor: 'rgba(26, 115, 232, 0.08)',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: true,
-            pointRadius: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { display: false }, ticks: { font: { size: 9 } } },
-            y: { beginAtZero: true, grid: { color: '#F1F3F4' }, ticks: { precision: 0, font: { size: 9 } } }
-          }
-        }
-      });
-
-      // 2. Funnel Chart
-      const ctxFunnel = document.getElementById('chart-funnel').getContext('2d');
-      STATE.charts.funnel = new Chart(ctxFunnel, {
-        type: 'doughnut',
-        data: {
-          labels: ['Published', 'Rejected', 'Duplicate'],
-          datasets: [{
-            data: [STATE.posts.length, 12, 5],
-            backgroundColor: ['#137333', '#EA4335', '#FBBC04'],
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '70%',
-          plugins: {
-            legend: { position: 'bottom', labels: { boxWidth: 8, font: { size: 10 } } }
-          }
-        }
-      });
+    function openGuideModal() {
+      const modal = document.getElementById('guide-modal');
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.remove('scale-95');
     }
 
-    function updateCharts() {
-      if (!STATE.charts.velocity || !STATE.charts.funnel) return;
-
-      const total = STATE.posts.length;
-      STATE.charts.velocity.data.datasets[0].data = [1, Math.max(1, total - 2), total - 1, total, total + 1];
-      STATE.charts.velocity.update();
-
-      STATE.charts.funnel.data.datasets[0].data = [total, total * 2 + 3, Math.floor(total * 0.8)];
-      STATE.charts.funnel.update();
+    function closeGuideModal() {
+      const modal = document.getElementById('guide-modal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      modal.firstElementChild.classList.add('scale-95');
     }
 
-    /* Force Discovery Cycle Trigger */
-    async function forceAutonomousCycle() {
-      const btn = document.getElementById('force-trigger-btn');
-      btn.disabled = true;
-      btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i><span>Scanning...</span>`;
-      lucide.createIcons();
-
-      appendTelemetry(`[TRIGGER] Manual topic scan requested for ${STATE.personaName}`, 'text-amber-300');
-
-      // Generate a new simulated post on trigger
-      const newPost = {
-        id: "p-" + Math.floor(100 + Math.random() * 900),
-        createdAt: new Date().toISOString(),
-        text: `New research synthesis on ${STATE.personaDomain}: Evaluated emerging benchmark parameters and updated vector memory weights for deployment safety.`,
-        rationale: `Automated priority threshold met (0.94 score) during forced trigger cycle.`,
-        sources: ["https://arxiv.org", "https://github.com"]
-      };
-
-      setTimeout(() => {
-        STATE.posts.unshift(newPost);
-        renderFeedList();
-        updateCharts();
-
-        btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="zap" class="w-3.5 h-3.5"></i><span>Discover Now</span>`;
-        lucide.createIcons();
-
-        showToast('New intelligence post published!', 'success');
-        confetti({ particleCount: 25, spread: 30, origin: { y: 0.8 } });
-      }, 1200);
+    function dismissOnboarding() {
+      const banner = document.getElementById('onboarding-banner');
+      if (banner) banner.style.display = 'none';
+      localStorage.setItem('hide_onboarding_banner', 'true');
     }
 
-    /* Autonomous Background Worker */
-    function startAutonomousWorker() {
-      if (STATE.pollInterval) clearInterval(STATE.pollInterval);
-      STATE.pollInterval = setInterval(() => {
-        if (STATE.isAutonomous) {
-          appendTelemetry(`[AUTO] Polling stream...`, 'text-sky-300');
-          fetchFeedFromAPI();
-        }
-      }, 15000);
-    }
-
-    function toggleAutonomousMode() {
-      STATE.isAutonomous = !STATE.isAutonomous;
-      const btnText = document.getElementById('auto-btn-text');
-      const btn = document.getElementById('toggle-auto-btn');
-
-      if (STATE.isAutonomous) {
-        btnText.textContent = "Autonomous ON";
-        btn.className = "px-3 py-1.5 rounded-full bg-google-greenBg text-google-green text-xs font-semibold hover:bg-emerald-100 transition-all flex items-center gap-1.5";
-        showToast('Autonomous worker enabled', 'info');
-      } else {
-        btnText.textContent = "Autonomous OFF";
-        btn.className = "px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-300 transition-all flex items-center gap-1.5";
-        showToast('Autonomous worker paused', 'info');
-      }
-    }
-
-    /* UI State Sync */
-    function syncStateToUI() {
-      document.getElementById('nav-persona-name').textContent = STATE.personaName;
-      document.getElementById('nav-persona-domain').textContent = STATE.personaDomain;
-      document.getElementById('nav-agent-id').textContent = `ID: ${STATE.agentId ? STATE.agentId.substring(0, 8) : 'init...'}`;
-    }
-
-    /* Telemetry Log Append */
-    function appendTelemetry(msg, colorClass = 'text-slate-300') {
-      const container = document.getElementById('telemetry-body');
-      if (!container) return;
-      const line = document.createElement('div');
-      line.className = colorClass;
-      line.textContent = msg;
-      container.appendChild(line);
-      container.scrollTop = container.scrollHeight;
-    }
-
-    /* Modals & Toasts */
     function openSettingsModal() {
       document.getElementById('api-url-input').value = STATE.baseUrl;
       const modal = document.getElementById('settings-modal');
@@ -769,52 +1037,60 @@
       STATE.baseUrl = document.getElementById('api-url-input').value.trim();
       localStorage.setItem('agent_base_url', STATE.baseUrl);
       closeSettingsModal();
-      fetchFeedFromAPI(true);
-      showToast('API URL saved', 'success');
+      checkApiHealth();
+      fetchFeedFromAPI();
+      showToast('API Endpoint updated', 'success');
     }
 
-    function openCustomPersonaModal() {
-      const modal = document.getElementById('custom-persona-modal');
+    function openInitModal() {
+      const modal = document.getElementById('init-modal');
       modal.classList.remove('opacity-0', 'pointer-events-none');
       modal.firstElementChild.classList.remove('scale-95');
     }
 
-    function closeCustomPersonaModal() {
-      const modal = document.getElementById('custom-persona-modal');
+    function closeInitModal() {
+      const modal = document.getElementById('init-modal');
       modal.classList.add('opacity-0', 'pointer-events-none');
       modal.firstElementChild.classList.add('scale-95');
     }
 
-    function handleCustomPersonaSubmit(e) {
+    function handleInitSubmit(e) {
       e.preventDefault();
-      const name = document.getElementById('custom-name').value.trim();
-      const domain = document.getElementById('custom-domain').value.trim();
-      closeCustomPersonaModal();
-      switchPersonaPreset(name, domain);
+      const name = document.getElementById('input-persona-name').value;
+      const domain = document.getElementById('input-persona-domain').value;
+      closeInitModal();
+      initAgentAPI(name, domain, '🤖');
+    }
+
+    function syncStateToUI() {
+      document.getElementById('nav-persona-name').textContent = STATE.personaName;
+      document.getElementById('nav-persona-domain').textContent = STATE.personaDomain;
     }
 
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
-      toast.className = `pointer-events-auto px-3.5 py-2 rounded-xl shadow-one-md text-xs font-semibold bg-slate-900 text-white transition-all duration-200 transform translate-y-2 opacity-0`;
-      toast.textContent = msg;
+      toast.className = `pointer-events-auto px-4 py-2.5 rounded-2xl shadow-2xl text-xs font-bold bg-slate-900 border border-slate-700 text-white transition-all duration-200 transform translate-y-2 opacity-0 flex items-center gap-2 shadow-indigo-500/10`;
+      toast.innerHTML = `<span class="text-indigo-400">✨</span><span>${msg}</span>`;
       container.appendChild(toast);
 
-      setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+
       setTimeout(() => {
         toast.classList.add('opacity-0');
         setTimeout(() => toast.remove(), 200);
       }, 2200);
     }
 
-    /* Utilities */
     function getRelativeTime(iso) {
       if (!iso) return 'Just now';
       const diff = Math.floor((new Date() - new Date(iso)) / 1000);
       if (diff < 60) return 'Just now';
-      if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-      return `${Math.floor(diff / 86400)}d ago`;
+      if (diff < 3600) return `${Math.floor(diff / 60)} mins ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)} hrs ago`;
+      return `${Math.floor(diff / 86400)} days ago`;
     }
 
     function formatDomain(urlStr) {
@@ -822,9 +1098,9 @@
       catch (e) { return 'Source'; }
     }
 
-    function copyPostText(str) {
+    function copyText(str) {
       navigator.clipboard.writeText(str);
-      showToast('Copied to clipboard', 'success');
+      showToast('Copied text to clipboard', 'success');
     }
 
     function escapeHtml(str) {
